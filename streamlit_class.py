@@ -1,0 +1,329 @@
+import requests
+import json
+import re
+import random
+import streamlit as st
+from newspaper import Article
+from urllib import parse
+import urllib
+
+
+@st.cache_data
+def get_douyin_id(url):
+    """
+    获取抖音视频id
+    :param url:
+    :return:
+    """
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers)
+    return response.url
+
+
+@st.cache_data
+def douyin_video(url):
+    """
+    抖音无水印视频
+    :param url:
+    :return:
+    """
+    urls = get_douyin_id(url)
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    code = 0
+    while True:
+        if code == 5:
+            return None
+        try:
+            url_id = re.findall('(\d+)', urls)[0]
+            url = f'https://www.douyin.com/discover?modal_id={url_id}'
+            response = requests.get(url, headers=headers)
+            re_html = re.findall('type="application/json">(.*?)</script>', response.text)[0]
+            decode_html = urllib.parse.unquote(re_html)  # 对html进行解码
+            video_url = 'https://' + re.findall('"playApi":"//(.*?)"', decode_html)[0]
+            print(f'无水印视频链接：{video_url}')
+            return video_url
+        except Exception as e:
+            print(e)
+            code += 1
+
+
+@st.cache_data  # 装饰器缓存，加快效率
+def news_info(urls):
+    """
+    获取新闻信息
+    :param urls:新闻链接
+    :return:
+    """
+    article = Article(urls)
+    article.download()
+    article.parse()
+    return article.title, article.text
+
+
+@st.cache_data  # 装饰器缓存，加快效率
+def get_img_url_list():
+    """
+    采集图片
+    :return:
+    """
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    }
+    url = f'https://pic.netbian.top/shoujibizhi/index_{random.randint(2, 286)}.html'
+    response = requests.get(url, headers=headers)
+    href_list = []
+    for href in re.findall('data-original="(.*?)"', response.text):
+        if "http" in href:
+            href_list.append(href)
+        else:
+            href_list.append("'https:" + href)
+    return href_list
+
+@st.cache_data  # 装饰器缓存，加快效率
+def get_video_id(kid):
+    """
+    youtube视频采集
+    :param kid: 视频链接
+    :return:
+    """
+    headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+        }
+    url = f'https://www.youtube.com/embed/{kid}'
+    num = 0
+    while True:
+        if num == 5:
+            return None
+        try:
+            response = requests.get(url=url, headers=headers)
+            ids = re.findall('"INNERTUBE_API_KEY":"(.*?)"', response.text)[0]
+            return ids
+        except Exception as e:
+            print(f'video_id:{e}')
+            num += 1
+
+@st.cache_data  # 装饰器缓存，加快效率
+def get_info(kid, vid):
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+    }
+    url = "https://www.youtube.com/youtubei/v1/player"
+    params = {
+        "key": f"{vid}",
+        "prettyPrint": "false"
+    }
+    data = {
+      "context": {
+        "client": {
+          "hl": "zh-CN",
+          "gl": "SG",
+          "remoteHost": "192.53.117.115",
+          "deviceMake": "",
+          "deviceModel": "",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36,gzip(gfe)",
+          "clientName": "WEB_EMBEDDED_PLAYER",
+          "clientVersion": "1.20230829.01.00",
+          "osName": "Windows",
+          "osVersion": "10.0",
+          "platform": "DESKTOP",
+          "clientFormFactor": "UNKNOWN_FORM_FACTOR",
+          "timeZone": "Asia/Shanghai",
+          "browserName": "Chrome",
+          "browserVersion": "116.0.0.0",
+          "userInterfaceTheme": "USER_INTERFACE_THEME_LIGHT",
+          "connectionType": "CONN_CELLULAR_3G",
+          "playerType": "UNIPLAYER",
+        },
+      },
+      "videoId": f"{kid}",
+    }
+    video_list = []
+    codes = 0
+    while True:
+        if codes == 5:
+            return None
+        try:
+            response = requests.post(url=url, headers=headers, params=params, data=json.dumps(data))
+            info_json = response.json()['streamingData']['formats']
+            for info in info_json:
+                info_dict = {
+                    "视频链接": info['url'],
+                    "视频画质": info['qualityLabel'],
+                    "视频帧率": info['fps'],
+                }
+                video_list.append(info_dict)
+            return video_list
+        except Exception as e:
+            codes += 1
+            print(f'获取视频失败：{e}')
+
+
+class Tool_Function:
+    """
+    工具功能
+    """
+
+    def __init__(self):
+        self.a = ''
+
+
+    def format_headers(self, headers) -> json:
+        """
+        header格式化功能
+        """
+        try:
+            split_headers = headers.split('\n')
+            new_headers_dict = {}
+            for header in split_headers:
+                info = header.split(':')
+                new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
+            return json.dumps(new_headers_dict)
+        except Exception as e:
+            print(e)
+            return None
+
+
+class Tool_Web:
+    """
+    工具页面
+    """
+
+    def __init__(self):
+        self.tool_function = Tool_Function()  # 初始化工具功能类
+        self.function_type = None  # 功能类别
+        self.selectbox_options = (
+            "Headers格式化",
+            "Json格式转数据表",
+            "Url参数提取",
+            "新闻采集",
+            "PDF转Word",
+            "图片采集",
+            "Youtube视频采集",
+            "抖音去水印",
+        )  # 侧边栏参数
+
+    def streamlit_selectbox(self):
+        """
+        侧边栏初始化
+        :return:
+        """
+        tool_selectbox = st.sidebar.selectbox(
+            label="功能列表",
+            options=self.selectbox_options
+        )
+        return tool_selectbox
+
+
+    def streamlit_function(self):
+        """
+        侧边栏执行功能
+        :return:
+        """
+        self.function_type = self.streamlit_selectbox()
+        if self.function_type == self.selectbox_options[0]:
+            '''Headers格式化'''
+            st.title(f'{self.selectbox_options[0]}')
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_area(label='请输入需要格式化的header:')
+                button_code = st.button(label=':blue[格式化]')
+            if button_code:
+                with st.sidebar:
+                    with st.spinner('正在格式化...'):
+                        headers_fun = self.tool_function.format_headers(input_message)
+                if headers_fun:
+                    st.json(headers_fun)
+                    with st.sidebar:
+                        st.success('格式化完成!')
+                else:
+                    with st.sidebar:
+                        st.error('格式化失败')
+                    st.json({
+                                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
+        if self.function_type == self.selectbox_options[3]:
+            '''新闻采集'''
+            # st.title(f'{self.selectbox_options[3]}')
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_input(label='请输入采集的链接:')
+                button_code = st.button(label=':blue[采集]')
+            if button_code:
+                try:
+                    with st.sidebar:
+                        with st.spinner('正在采集...'):
+                            news_fun = news_info(input_message)
+                    st.title(news_fun[0])
+                    st.write(news_fun[1])
+                except Exception as e:
+                    st.error(f'抓取失败：{e}')
+        if self.function_type == self.selectbox_options[5]:
+            '''图片采集'''
+            st.title(f'{self.selectbox_options[5]}')
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                # input_message = st.text_input(label='请输入:')
+                button_code = st.button(label=':blue[采集]')
+            if button_code:
+                try:
+                    with st.sidebar:
+                        with st.spinner('正在采集...'):
+                            img_list = get_img_url_list()
+                            st.success('右击图片保存')
+                    for imgs in img_list:
+                        st.image(imgs)
+                except Exception as e:
+                    st.error(f'抓取失败：{e}')
+        if self.function_type == self.selectbox_options[6]:
+            '''youtube采集'''
+            st.title(f'{self.selectbox_options[6]}')
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_input(label='请输入视频链接:')
+                button_code = st.button(label=':blue[采集]')
+            if button_code:
+                try:
+                    with st.sidebar:
+                        with st.spinner('正在采集...'):
+                            kids = re.findall('v=(.*)', input_message)[0]
+                            vids = get_video_id(kids)
+                            if vids:
+                                video_url_list = get_info(kids, vids)
+                                st.success('右击视频保存')
+                            else:
+                                st.error(f'抓取失败')
+                    if video_url_list:
+                        for video in video_url_list:
+                            st.header(f"画质:{video['视频画质']} 帧率:{video['视频帧率']}")
+                            st.video(video['视频链接'])
+                    else:
+                        st.error(f'抓取失败')
+                except Exception as e:
+                    st.error(f'抓取失败：{e}')
+        if self.function_type == self.selectbox_options[7]:
+            '''抖音去水印'''
+            # st.title(f'{self.selectbox_options[7]}')
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_input(label='请输入视频链接:')
+                button_code = st.button(label=':blue[采集]')
+            if button_code:
+                try:
+                    with st.sidebar:
+                        with st.spinner('正在采集...'):
+                            douyin_video_url = douyin_video(input_message)
+                            if douyin_video_url:
+                                st.success('进入视频链接右键保存')
+                            else:
+                                st.error(f'抓取失败')
+                    if douyin_video_url:
+                        st.header('无水印视频链接：')
+                        st.write(douyin_video_url)
+                        # st.video(douyin_video_url)
+                    else:
+                        st.error(f'抓取失败')
+                except Exception as e:
+                    st.error(f'抓取失败：{e}')
+
+
+if __name__ == '__main__':
+    tool = Tool_Web()
+    tool.streamlit_function()

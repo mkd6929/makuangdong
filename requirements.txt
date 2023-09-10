@@ -1,0 +1,5 @@
+urllib3==1.26.16
+requests==2.31.0
+lxml>=4.9.2,<5.0.0
+newspaper3k==0.2.8
+pdfplumber
