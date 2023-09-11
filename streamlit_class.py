@@ -263,6 +263,7 @@ def get_article(keyword):
         "v": "2"
     }
     response = requests.get(url, headers=headers, params=params)
+    print(response.text)
     urls = response.json()['data'][0]['url']
     return parse_article(urls)
 
