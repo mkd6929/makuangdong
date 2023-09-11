@@ -324,8 +324,10 @@ class Tool_Web:
                             urls = param_url(input_message)
                             st.success('提取成功!')
                     st.code(urls)
-                except Exception as e:
-                    st.error(f'提取失败：{e}')
+                except:
+                    p_text = "param = {}"
+                    text = f"url = {input_message} \n{p_text}"
+                    st.code(text)
 
 
     def self_pdf_word(self):
