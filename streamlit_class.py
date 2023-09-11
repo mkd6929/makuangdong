@@ -6,6 +6,7 @@ import streamlit as st
 from newspaper import Article
 from urllib import parse
 import urllib
+import pdfplumber
 
 
 @st.cache_data
@@ -38,9 +39,10 @@ def douyin_video(url):
         if code == 5:
             return None
         try:
-            url_id = re.findall('(\d+)', urls)[0]
+            url_id = re.findall('(\d\d\d\d\d\d\d\d+)', urls)[0]
             url = f'https://www.douyin.com/discover?modal_id={url_id}'
             response = requests.get(url, headers=headers)
+            print(response.text)
             re_html = re.findall('type="application/json">(.*?)</script>', response.text)[0]
             decode_html = urllib.parse.unquote(re_html)  # 对html进行解码
             video_url = 'https://' + re.findall('"playApi":"//(.*?)"', decode_html)[0]
@@ -162,29 +164,84 @@ def get_info(kid, vid):
             print(f'获取视频失败：{e}')
 
 
-class Tool_Function:
+def json_convert_sql(info: dict) -> str:
     """
-    工具功能
+    json转数据表
+    :param info:
+    :return:
     """
+    text_list = ['CREATE TABLE table_name (', "`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',"]
+    for i in info.items():
+        info_key = i[0]
+        info_value = i[1]
+        if len(info_value) >= 100:
+            text = f"`{info_key}` text COMMENT '',"
+            text_list.append(text)
+        elif type(info_key) == int:
+            text = f"`{info_key}` int COMMENT '',"
+            text_list.append(text)
+        else:
+            text = f"`{info_key}` varchar(255) COMMENT '',"
+            text_list.append(text)
+    text_list.append("`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',")
+    text_list.append("`updata_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',")
+    text_list.append('PRIMARY KEY (`id`)')
+    text_list.append(') ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;')
+    mysql_sql = '\n'.join(text_list)
+    return mysql_sql
 
-    def __init__(self):
-        self.a = ''
+def param_url(urls):
+    """
+    url参数提取
+    :param urls:
+    :return:
+    """
+    text = ''
+    split_url = urls.split('?')
+    url = split_url[0]
+    param_spilt = split_url[1].split('&')
+    param_dict = {}
+    text += f'url = {url}\n'
+    for p in param_spilt:
+        info = p.split('=')
+        param_dict[info[0]] = info[1]
+    # print(param_dict)
+    text += f'params = {json.dumps(param_dict, indent=4, ensure_ascii=False, sort_keys=True)}'
+    return text
+
+def pdf_word(file) -> (str, str):
+    """
+    pdf转word
+    :return:
+    """
+    name = file.name.split('.')[0]
+    pdf = pdfplumber.open(file)
+    page = len(pdf.pages)
+    texts = ""
+    for i in range(0, page):
+        page = pdf.pages[i]
+        text = page.extract_text()
+        texts += text
+    down_name = name + '.docx'
+    return down_name, texts
 
 
-    def format_headers(self, headers) -> json:
-        """
-        header格式化功能
-        """
-        try:
-            split_headers = headers.split('\n')
-            new_headers_dict = {}
-            for header in split_headers:
-                info = header.split(':')
-                new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
-            return json.dumps(new_headers_dict)
-        except Exception as e:
-            print(e)
-            return None
+def format_headers(headers: str) -> json:
+    """
+    header格式化功能
+    :param headers:复制的header文本
+    :return: 格式化完毕后的json文本
+    """
+    try:
+        split_headers = headers.split('\n')
+        new_headers_dict = {}
+        for header in split_headers:
+            info = header.split(':')
+            new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
+        return json.dumps(new_headers_dict)
+    except Exception as e:
+        print(e)
+        return None
 
 
 class Tool_Web:
@@ -193,7 +250,6 @@ class Tool_Web:
     """
 
     def __init__(self):
-        self.tool_function = Tool_Function()  # 初始化工具功能类
         self.function_type = None  # 功能类别
         self.selectbox_options = (
             "Headers格式化",
@@ -217,13 +273,7 @@ class Tool_Web:
         )
         return tool_selectbox
 
-
-    def streamlit_function(self):
-        """
-        侧边栏执行功能
-        :return:
-        """
-        self.function_type = self.streamlit_selectbox()
+    def self_header(self):
         if self.function_type == self.selectbox_options[0]:
             '''Headers格式化'''
             st.title(f'{self.selectbox_options[0]}')
@@ -233,7 +283,7 @@ class Tool_Web:
             if button_code:
                 with st.sidebar:
                     with st.spinner('正在格式化...'):
-                        headers_fun = self.tool_function.format_headers(input_message)
+                        headers_fun = format_headers(input_message)
                 if headers_fun:
                     st.json(headers_fun)
                     with st.sidebar:
@@ -241,8 +291,62 @@ class Tool_Web:
                 else:
                     with st.sidebar:
                         st.error('格式化失败')
-                    st.json({
-                                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
+                    st.json({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
+
+    def self_json_table(self):
+        if self.function_type == self.selectbox_options[1]:
+            '''Json格式转数据表'''
+            st.title(f'{self.selectbox_options[1]}')
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_area(label='请输入需要转换的json:')
+                button_code = st.button(label=':blue[转换]')
+            if button_code:
+                try:
+                    with st.sidebar:
+                        with st.spinner('正在转换...'):
+                            table = json_convert_sql(json.loads(input_message))
+                            st.success('转换成功!')
+                    st.code(table)
+                except Exception as e:
+                    st.error(f'转换失败：{e}')
+
+    def self_param_url(self):
+        if self.function_type == self.selectbox_options[2]:
+            '''Url参数提取'''
+            st.title(f'{self.selectbox_options[2]}')
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_input(label='请输入需要提取的url:')
+                button_code = st.button(label=':blue[提取]')
+            if button_code:
+                try:
+                    with st.sidebar:
+                        with st.spinner('正在提取...'):
+                            urls = param_url(input_message)
+                            st.success('提取成功!')
+                    st.code(urls)
+                except Exception as e:
+                    st.error(f'提取失败：{e}')
+
+
+    def self_pdf_word(self):
+        if self.function_type == self.selectbox_options[4]:
+            '''PDF转Word'''
+            button_code = 0
+            st.title(f'{self.selectbox_options[4]}')
+            with st.sidebar:
+                file = st.file_uploader("请上传文件", type="pdf")
+                if file:
+                    with st.spinner('正在上传...'):
+                        st.success('文件上传完毕')
+                        button_code = st.button(':blue[转换]')
+            if button_code:
+                pdf_info = pdf_word(file)
+                st.text(pdf_info[1])
+                with st.sidebar:
+                    word = st.download_button('保存为Word', pdf_info[1], file_name=f'{pdf_info[0]}')
+
+
+    def self_news(self):
         if self.function_type == self.selectbox_options[3]:
             '''新闻采集'''
             # st.title(f'{self.selectbox_options[3]}')
@@ -258,22 +362,28 @@ class Tool_Web:
                     st.write(news_fun[1])
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
+
+
+    def self_imgs(self):
         if self.function_type == self.selectbox_options[5]:
             '''图片采集'''
             st.title(f'{self.selectbox_options[5]}')
             with st.sidebar:  # 需要在侧边栏内展示的内容
-                # input_message = st.text_input(label='请输入:')
+                input_message = st.text_input(label='请输入:')
                 button_code = st.button(label=':blue[采集]')
             if button_code:
                 try:
                     with st.sidebar:
                         with st.spinner('正在采集...'):
                             img_list = get_img_url_list()
-                            st.success('右击图片保存')
+                            print(img_list)
                     for imgs in img_list:
                         st.image(imgs)
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
+
+
+    def self_youtube_video(self):
         if self.function_type == self.selectbox_options[6]:
             '''youtube采集'''
             st.title(f'{self.selectbox_options[6]}')
@@ -299,9 +409,12 @@ class Tool_Web:
                         st.error(f'抓取失败')
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
+
+
+    def self_douyin_video(self):
         if self.function_type == self.selectbox_options[7]:
             '''抖音去水印'''
-            # st.title(f'{self.selectbox_options[7]}')
+            st.title(f'{self.selectbox_options[7]}')
             with st.sidebar:  # 需要在侧边栏内展示的内容
                 input_message = st.text_input(label='请输入视频链接:')
                 button_code = st.button(label=':blue[采集]')
@@ -322,6 +435,22 @@ class Tool_Web:
                         st.error(f'抓取失败')
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
+
+
+    def streamlit_function(self):
+        """
+        侧边栏执行功能
+        :return:
+        """
+        self.function_type = self.streamlit_selectbox()
+        self.self_header()
+        self.self_json_table()
+        self.self_pdf_word()
+        self.self_param_url()
+        self.self_news()
+        self.self_imgs()
+        self.self_youtube_video()
+        self.self_douyin_video()
 
 
 if __name__ == '__main__':
