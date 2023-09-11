@@ -6,6 +6,7 @@ import streamlit as st
 from newspaper import Article
 from urllib import parse
 import urllib
+from bs4 import BeautifulSoup
 import pdfplumber
 
 
@@ -201,10 +202,10 @@ def param_url(urls):
     url = split_url[0]
     param_spilt = split_url[1].split('&')
     param_dict = {}
-    text += f'url = {url}\n'
+    text += f'url = "{url}"\n'
     for p in param_spilt:
         info = p.split('=')
-        param_dict[info[0]] = info[1]
+        param_dict[info[0]] = urllib.parse.unquote(info[1].encode('utf-8'))
     # print(param_dict)
     text += f'params = {json.dumps(param_dict, indent=4, ensure_ascii=False, sort_keys=True)}'
     return text
@@ -244,6 +245,44 @@ def format_headers(headers: str) -> json:
         return None
 
 
+def get_article(keyword):
+    """
+    获取文章
+    :param keyword:
+    :return:
+    """
+    headers = {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    url = 'https://so.ruiwen.com/res/best_kds/'
+    params = {
+        "keyword": f"{keyword}",
+        "nhl": "1",
+        "page": "1",
+        "url": "www.ruiwen.com",
+        "v": "2"
+    }
+    response = requests.get(url, headers=headers, params=params)
+    urls = response.json()['data'][0]['url']
+    return parse_article(urls)
+
+def parse_article(url):
+    """
+    解析文章链接
+    :param url:
+    :return:
+    """
+    headers = {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    article_info = str(soup.findAll(name="div", attrs={"class": "main-left"})[0])
+    re_str = '<a href="(.*?)"|<img alt(.*?)>|<li class="excellent_articles_title">(.*?)</li>|target="_blank">|<span(.*?)</span>'
+    article = re.sub(re_str, '', article_info)
+    return article
+
+
 class Tool_Web:
     """
     工具页面
@@ -261,6 +300,7 @@ class Tool_Web:
             "Youtube视频采集",
             "抖音去水印",
             "Json格式化",
+            "文章采集",
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -293,6 +333,20 @@ class Tool_Web:
                     with st.sidebar:
                         st.error('格式化失败')
                     st.json({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
+
+    def article_info(self):
+        if self.function_type == self.selectbox_options[9]:
+            '''文章采集'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_input(label='输入查询的文章类型:')
+                button_code = st.button(label=':blue[查询]')
+            if button_code:
+                with st.sidebar:
+                    with st.spinner('正在查询...'):
+                        articles = get_article(input_message)
+                        st.success('查询成功!')
+                st.markdown(articles, unsafe_allow_html=True)
+
 
     def self_json_table(self):
         if self.function_type == self.selectbox_options[1]:
@@ -458,15 +512,16 @@ class Tool_Web:
         :return:
         """
         self.function_type = self.streamlit_selectbox()
-        self.self_header()
-        self.self_format_json()
-        self.self_json_table()
-        self.self_pdf_word()
-        self.self_param_url()
-        self.self_news()
-        self.self_imgs()
-        self.self_youtube_video()
-        self.self_douyin_video()
+        self.self_header()  # headers格式化
+        self.self_format_json()  # json格式化
+        self.self_json_table()  # json转数据表
+        self.self_pdf_word()  # pdf转word
+        self.self_param_url()  # url参数提取
+        self.self_news()  # 新闻采集
+        self.self_imgs()  # 图片采集
+        self.article_info()  # 文章采集
+        self.self_youtube_video()  # youtube视频采集
+        self.self_douyin_video()  # 抖音无水印
 
 
 if __name__ == '__main__':
