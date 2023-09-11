@@ -260,6 +260,7 @@ class Tool_Web:
             "图片采集",
             "Youtube视频采集",
             "抖音去水印",
+            "Json格式化",
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -310,6 +311,18 @@ class Tool_Web:
                 except Exception as e:
                     st.error(f'转换失败：{e}')
 
+    def self_format_json(self):
+        if self.function_type == self.selectbox_options[8]:
+            '''Json格式化'''
+            st.title(self.selectbox_options[8])
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                input_message = st.text_area(label='请输入需要转换的json:')
+                button_code = st.button(label=':blue[转换]')
+            if button_code:
+                json_info = json.dumps(input_message, indent=4, ensure_ascii=False, sort_keys=True)
+                st.json(json.loads(json_info))
+
+
     def self_param_url(self):
         if self.function_type == self.selectbox_options[2]:
             '''Url参数提取'''
@@ -345,7 +358,7 @@ class Tool_Web:
                 pdf_info = pdf_word(file)
                 st.text(pdf_info[1])
                 with st.sidebar:
-                    word = st.download_button('保存为Word', pdf_info[1], file_name=f'{pdf_info[0]}')
+                    st.download_button('保存为Word', pdf_info[1], file_name=f'{pdf_info[0]}')
 
 
     def self_news(self):
@@ -446,6 +459,7 @@ class Tool_Web:
         """
         self.function_type = self.streamlit_selectbox()
         self.self_header()
+        self.self_format_json()
         self.self_json_table()
         self.self_pdf_word()
         self.self_param_url()
