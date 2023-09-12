@@ -87,6 +87,7 @@ def get_img_url_list():
             href_list.append("'https:" + href)
     return href_list
 
+
 @st.cache_data  # 装饰器缓存，加快效率
 def get_video_id(kid):
     """
@@ -95,8 +96,8 @@ def get_video_id(kid):
     :return:
     """
     headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-        }
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    }
     url = f'https://www.youtube.com/embed/{kid}'
     num = 0
     while True:
@@ -110,6 +111,7 @@ def get_video_id(kid):
             print(f'video_id:{e}')
             num += 1
 
+
 @st.cache_data  # 装饰器缓存，加快效率
 def get_info(kid, vid):
     headers = {
@@ -121,29 +123,29 @@ def get_info(kid, vid):
         "prettyPrint": "false"
     }
     data = {
-      "context": {
-        "client": {
-          "hl": "zh-CN",
-          "gl": "SG",
-          "remoteHost": "192.53.117.115",
-          "deviceMake": "",
-          "deviceModel": "",
-          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36,gzip(gfe)",
-          "clientName": "WEB_EMBEDDED_PLAYER",
-          "clientVersion": "1.20230829.01.00",
-          "osName": "Windows",
-          "osVersion": "10.0",
-          "platform": "DESKTOP",
-          "clientFormFactor": "UNKNOWN_FORM_FACTOR",
-          "timeZone": "Asia/Shanghai",
-          "browserName": "Chrome",
-          "browserVersion": "116.0.0.0",
-          "userInterfaceTheme": "USER_INTERFACE_THEME_LIGHT",
-          "connectionType": "CONN_CELLULAR_3G",
-          "playerType": "UNIPLAYER",
+        "context": {
+            "client": {
+                "hl": "zh-CN",
+                "gl": "SG",
+                "remoteHost": "192.53.117.115",
+                "deviceMake": "",
+                "deviceModel": "",
+                "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36,gzip(gfe)",
+                "clientName": "WEB_EMBEDDED_PLAYER",
+                "clientVersion": "1.20230829.01.00",
+                "osName": "Windows",
+                "osVersion": "10.0",
+                "platform": "DESKTOP",
+                "clientFormFactor": "UNKNOWN_FORM_FACTOR",
+                "timeZone": "Asia/Shanghai",
+                "browserName": "Chrome",
+                "browserVersion": "116.0.0.0",
+                "userInterfaceTheme": "USER_INTERFACE_THEME_LIGHT",
+                "connectionType": "CONN_CELLULAR_3G",
+                "playerType": "UNIPLAYER",
+            },
         },
-      },
-      "videoId": f"{kid}",
+        "videoId": f"{kid}",
     }
     video_list = []
     codes = 0
@@ -186,11 +188,13 @@ def json_convert_sql(info: dict) -> str:
             text = f"`{info_key}` varchar(255) COMMENT '',"
             text_list.append(text)
     text_list.append("`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',")
-    text_list.append("`updata_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',")
+    text_list.append(
+        "`updata_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',")
     text_list.append('PRIMARY KEY (`id`)')
     text_list.append(') ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;')
     mysql_sql = '\n'.join(text_list)
     return mysql_sql
+
 
 def param_url(urls):
     """
@@ -210,6 +214,7 @@ def param_url(urls):
     # print(param_dict)
     text += f'params = {json.dumps(param_dict, indent=4, ensure_ascii=False, sort_keys=True)}'
     return text
+
 
 def pdf_word(file) -> (str, str):
     """
@@ -253,15 +258,15 @@ def get_article(keyword):
     :return:
     """
     headers = {
-      "referer": "https",
-      "sec-ch-ua": "Chromium;v=116, Not)A;Brand;v=24, Google Chrome;v=116",
-      "sec-ch-ua-mobile": "?0",
-      "sec-ch-ua-platform": "Windows",
-      "sec-fetch-dest": "empty",
-      "sec-fetch-mode": "cors",
-      "sec-fetch-site": "same-origin",
-      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
-      "x-requested-with": "XMLHttpRequest"
+        "referer": "https",
+        "sec-ch-ua": "Chromium;v=116, Not)A;Brand;v=24, Google Chrome;v=116",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "Windows",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+        "x-requested-with": "XMLHttpRequest"
     }
     url = 'https://so.ruiwen.com/res/best_kds/'
     params = {
@@ -275,6 +280,7 @@ def get_article(keyword):
     urls = response.json()['data'][0]['url']
     return parse_article(urls)
 
+
 def parse_article(url):
     """
     解析文章链接
@@ -282,7 +288,7 @@ def parse_article(url):
     :return:
     """
     headers = {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
     }
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -299,7 +305,7 @@ def query_ip_info(ips):
     :return:
     """
     headers = {
-      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
     }
     url = "https://nordvpn.com/wp-admin/admin-ajax.php"
     params = {
@@ -315,6 +321,59 @@ def query_ip_info(ips):
     }
     lat_long = [response.json()['coordinates']['latitude'], response.json()['coordinates']['longitude']]
     return ip_json_info, lat_long
+
+
+@st.cache_data  # 装饰器缓存，加快效率
+def mv_type(keyword):
+    """
+    获取电影类型
+    :return:
+    """
+    headers = {
+        "Content-Type": "application/json;charset=UTF-8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    }
+    data = {
+        "condition": f"{keyword}",
+        "pageSize": 10,
+        "pageNum": 1
+    }
+    url = 'https://www.qmtv.pro/api/app/movie/index/searchMovieByName'
+    response = requests.post(url=url, headers=headers, data=json.dumps(data))
+    mv_list = response.json()['data']['records']
+    condition_list = []
+    for mv in mv_list:
+        condition_list.append(mv)
+    return condition_list
+
+
+@st.cache_data  # 装饰器缓存，加快效率
+def get_mv_url(info):
+    """
+    获取电影信息
+    :param info:
+    :return:
+    """
+    headers = {
+        "Content-Type": "application/json;charset=UTF-8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    }
+    url = 'https://www.qmtv.pro/api/app/movie/website/page'
+    data = {"pageSize": 10, "pageNum": 1,
+            "condition": info}
+    try:
+        response = requests.post(url=url, headers=headers, data=json.dumps(data))
+        info_list = response.json()['data']['records']
+        title = info['name']
+        mv_img = info['cover']
+        mv_list = []
+        for infos in info_list:
+            urls = infos['playUrl']
+            mv_list.append(urls)
+        return title, mv_img, mv_list
+    except Exception as e:
+        f'{e}'
+        return None
 
 
 class Tool_Web:
@@ -338,6 +397,7 @@ class Tool_Web:
             "ip代理测试",  # 10
             "长文本换行转python列表",  # 11
             "ip位置查询",  # 12
+            "电影搜索",  # 13
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -369,7 +429,8 @@ class Tool_Web:
                 else:
                     with st.sidebar:
                         st.error('格式化失败')
-                    st.json({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
+                    st.json({
+                                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
 
     def article_info(self):
         if self.function_type == self.selectbox_options[9]:
@@ -383,7 +444,6 @@ class Tool_Web:
                         articles = get_article(input_message)
                         st.success('查询成功!')
                 st.markdown(articles, unsafe_allow_html=True)
-
 
     def self_json_table(self):
         if self.function_type == self.selectbox_options[1]:
@@ -413,7 +473,6 @@ class Tool_Web:
                 json_info = json.dumps(input_message, indent=4, ensure_ascii=False, sort_keys=True)
                 st.json(json.loads(json_info))
 
-
     def self_param_url(self):
         if self.function_type == self.selectbox_options[2]:
             '''Url参数提取'''
@@ -433,7 +492,6 @@ class Tool_Web:
                     text = f"url = {input_message} \n{p_text}"
                     st.code(text)
 
-
     def self_pdf_word(self):
         if self.function_type == self.selectbox_options[4]:
             '''PDF转Word'''
@@ -450,7 +508,6 @@ class Tool_Web:
                 st.text(pdf_info[1])
                 with st.sidebar:
                     st.download_button('保存为Word', pdf_info[1], file_name=f'{pdf_info[0]}')
-
 
     def self_news(self):
         if self.function_type == self.selectbox_options[3]:
@@ -469,7 +526,6 @@ class Tool_Web:
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
 
-
     def self_imgs(self):
         if self.function_type == self.selectbox_options[5]:
             '''图片采集'''
@@ -487,7 +543,6 @@ class Tool_Web:
                         st.image(imgs)
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
-
 
     def self_youtube_video(self):
         if self.function_type == self.selectbox_options[6]:
@@ -515,7 +570,6 @@ class Tool_Web:
                         st.error(f'抓取失败')
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
-
 
     def self_douyin_video(self):
         if self.function_type == self.selectbox_options[7]:
@@ -575,7 +629,6 @@ class Tool_Web:
                     st.json(response.json())
                     st.success(f'响应时间：{end_time}')
 
-
     def txt_for_list(self):
         if self.function_type == self.selectbox_options[11]:
             '''文本转列表'''
@@ -593,7 +646,6 @@ class Tool_Web:
                 except Exception as e:
                     st.error(f'转换失败:{e}')
                     st.json(text_json)
-
 
     def isp_area(self):
         if self.function_type == self.selectbox_options[12]:
@@ -613,6 +665,29 @@ class Tool_Web:
                 if ip_info:
                     st.json(ip_info[0])
                     st.map(latitude=ip_info[1][0], longitude=ip_info[1][1])
+
+    def self_mv(self):
+        if self.function_type == self.selectbox_options[13]:
+            '''电影搜索'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                texts = st.text_input(label='请输入需要搜索的电影名称:')
+                button_code = st.button(label=':blue[查询]')
+            if button_code:
+                for mv in mv_type(texts):
+                    try:
+                        mv_info = get_mv_url(mv)
+                        if mv_info:
+                            title = mv_info[0]
+                            mv_img = mv_info[1]
+                            st.title(title)
+                            st.image(mv_img)
+                            for m in mv_info[2]:
+                                st.write(f'电影链接：{m}')
+                    except Exception as e:
+                        print(f'{e}')
+                        continue
+                with st.sidebar:
+                    st.success('查询完毕')
 
 
     def streamlit_function(self):
@@ -634,6 +709,7 @@ class Tool_Web:
         self.test_ip()  # ip测试
         self.txt_for_list()  # 长文本转列表
         self.isp_area()  # ip地址查询
+        self.self_mv()  # 电影搜索
 
 
 if __name__ == '__main__':
