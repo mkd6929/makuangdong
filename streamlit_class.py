@@ -8,6 +8,7 @@ from urllib import parse
 import urllib
 from bs4 import BeautifulSoup
 import pdfplumber
+import time
 
 
 @st.cache_data
@@ -529,13 +530,16 @@ class Tool_Web:
                         }
                         url = 'https://httpbin.org/get'
                         try:
+                            start_time = time.time()
                             response = requests.get(url=url, proxies=proxies)
                             st.success('测试完毕')
+                            end_time = time.time() - start_time
                         except Exception as e:
                             response = None
                             st.error(f'测试失败:{e}')
                 if response:
                     st.json(response.json())
+                    st.success(f'代理响应时间：{end_time}')
 
 
     def streamlit_function(self):
