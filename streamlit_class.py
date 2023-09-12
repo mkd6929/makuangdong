@@ -524,22 +524,29 @@ class Tool_Web:
             if button_code:
                 with st.sidebar:
                     with st.spinner('正在测试ip是否可用...'):
-                        proxies = {
-                            "http": f"http://{ips}",
-                            "https": f"http://{ips}",
-                        }
-                        url = 'https://httpbin.org/get'
-                        try:
+                        if ips:
+                            proxies = {
+                                "http": f"http://{ips}",
+                                "https": f"http://{ips}",
+                            }
+                            url = 'https://httpbin.org/get'
+                            try:
+                                start_time = time.time()
+                                response = requests.get(url=url, proxies=proxies)
+                                st.success('测试完毕')
+                                end_time = time.time() - start_time
+                            except Exception as e:
+                                response = None
+                                st.error(f'测试失败:{e}')
+                        else:
                             start_time = time.time()
-                            response = requests.get(url=url, proxies=proxies)
+                            url = 'https://httpbin.org/get'
+                            response = requests.get(url=url)
                             st.success('测试完毕')
                             end_time = time.time() - start_time
-                        except Exception as e:
-                            response = None
-                            st.error(f'测试失败:{e}')
                 if response:
                     st.json(response.json())
-                    st.success(f'代理响应时间：{end_time}')
+                    st.success(f'响应时间：{end_time}')
 
 
     def streamlit_function(self):
