@@ -271,7 +271,6 @@ def get_article(keyword):
         "v": "2"
     }
     response = requests.get(url, headers=headers, params=params)
-    st.text(response.text)
     urls = response.json()['data'][0]['url']
     return parse_article(urls)
 
@@ -300,16 +299,17 @@ class Tool_Web:
     def __init__(self):
         self.function_type = None  # 功能类别
         self.selectbox_options = (
-            "Headers格式化",
-            "Json格式转数据表",
-            "Url参数提取",
-            "新闻采集",
-            "PDF转Word",
-            "图片采集",
-            "Youtube视频采集",
-            "抖音去水印",
-            "Json格式化",
-            "文章采集",
+            "Headers格式化",  # 0
+            "Json格式转数据表",  # 1
+            "Url参数提取",  # 2
+            "新闻采集",  # 3
+            "PDF转Word",  # 4
+            "图片采集",  # 5
+            "Youtube视频采集",  # 6
+            "抖音去水印",  # 7
+            "Json格式化",  # 8
+            "文章采集",  # 9
+            "ip代理测试",  #10
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -514,6 +514,29 @@ class Tool_Web:
                 except Exception as e:
                     st.error(f'抓取失败：{e}')
 
+    def test_ip(self):
+        if self.function_type == self.selectbox_options[10]:
+            '''代理测试'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                ips = st.text_input(label='请输入需要测试的代理ip:')
+                button_code = st.button(label=':blue[测试]')
+            if button_code:
+                with st.sidebar:
+                    with st.spinner('正在测试ip是否可用...'):
+                        proxies = {
+                            "http": f"http://{ips}",
+                            "https": f"http://{ips}",
+                        }
+                        url = 'https://httpbin.org/get'
+                        try:
+                            response = requests.get(url=url, proxies=proxies)
+                            st.success('测试完毕')
+                        except Exception as e:
+                            response = None
+                            st.error(f'测试失败:{e}')
+                if response:
+                    st.json(response.json())
+
 
     def streamlit_function(self):
         """
@@ -531,6 +554,7 @@ class Tool_Web:
         self.article_info()  # 文章采集
         self.self_youtube_video()  # youtube视频采集
         self.self_douyin_video()  # 抖音无水印
+        self.test_ip()
 
 
 if __name__ == '__main__':
