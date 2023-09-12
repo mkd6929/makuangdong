@@ -325,10 +325,6 @@ def query_ip_info(ips):
 
 @st.cache_data  # 装饰器缓存，加快效率
 def mv_type(keyword):
-    """
-    获取电影类型
-    :return:
-    """
     headers = {
         "Content-Type": "application/json;charset=UTF-8",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
@@ -343,15 +339,15 @@ def mv_type(keyword):
     mv_list = response.json()['data']['records']
     condition_list = []
     for mv in mv_list:
-        condition_list.append(mv)
+        condition_list.append(
+            [{"movieName": mv['name'], "movieType": mv['type'], "movieYear": mv['year']}, [mv['name'], mv['cover']]])
     return condition_list
 
 
 @st.cache_data  # 装饰器缓存，加快效率
-def get_mv_url(info):
+def get_mv_url(condition, info):
     """
     获取电影信息
-    :param info:
     :return:
     """
     headers = {
@@ -360,20 +356,16 @@ def get_mv_url(info):
     }
     url = 'https://www.qmtv.pro/api/app/movie/website/page'
     data = {"pageSize": 10, "pageNum": 1,
-            "condition": info}
-    try:
-        response = requests.post(url=url, headers=headers, data=json.dumps(data))
-        info_list = response.json()['data']['records']
-        title = info['name']
-        mv_img = info['cover']
-        mv_list = []
-        for infos in info_list:
-            urls = infos['playUrl']
-            mv_list.append(urls)
-        return title, mv_img, mv_list
-    except Exception as e:
-        f'{e}'
-        return None
+            "condition": condition}
+    response = requests.post(url=url, headers=headers, data=json.dumps(data))
+    info_list = response.json()['data']['records']
+    title = info[0]
+    mv_img = info[1]
+    mv_list = []
+    for infos in info_list:
+        urls = infos['playUrl']
+        mv_list.append(urls)
+    return title, mv_img, mv_list
 
 
 class Tool_Web:
@@ -673,9 +665,10 @@ class Tool_Web:
                 texts = st.text_input(label='请输入需要搜索的电影名称:')
                 button_code = st.button(label=':blue[查询]')
             if button_code:
-                for mv in mv_type(texts):
+                mv_list = mv_type(texts)
+                for mv in mv_list:
                     try:
-                        mv_info = get_mv_url(mv)
+                        mv_info = get_mv_url(mv[0], mv[1])
                         if mv_info:
                             title = mv_info[0]
                             mv_img = mv_info[1]
