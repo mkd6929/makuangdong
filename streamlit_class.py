@@ -292,6 +292,31 @@ def parse_article(url):
     return article
 
 
+def query_ip_info(ips):
+    """
+    查询ip位置
+    :param ips:
+    :return:
+    """
+    headers = {
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    url = "https://nordvpn.com/wp-admin/admin-ajax.php"
+    params = {
+        "action": "get_user_info_data",
+        "ip": f"{ips}"
+    }
+    response = requests.get(url=url, headers=headers, params=params)
+    ip_json_info = {
+        'ip': response.json()['ip'],
+        'ip服务器': response.json()['isp'],
+        '国家': response.json()['country_code'],
+        '城市': response.json()['city'],
+    }
+    lat_long = [response.json()['coordinates']['latitude'], response.json()['coordinates']['longitude']]
+    return ip_json_info, lat_long
+
+
 class Tool_Web:
     """
     工具页面
@@ -311,7 +336,8 @@ class Tool_Web:
             "Json格式化",  # 8
             "文章采集",  # 9
             "ip代理测试",  # 10
-            "长文本换行转python列表",
+            "长文本换行转python列表",  # 11
+            "ip位置查询",  # 12
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -569,6 +595,25 @@ class Tool_Web:
                     st.json(text_json)
 
 
+    def isp_area(self):
+        if self.function_type == self.selectbox_options[12]:
+            '''ip位置查询'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                texts = st.text_input(label='请输入需要查询的ip:')
+                button_code = st.button(label=':blue[查询]')
+            if button_code:
+                with st.sidebar:
+                    with st.spinner('正在查询ip位置...'):
+                        try:
+                            ip_info = query_ip_info(texts)
+                            st.success('查询完毕')
+                        except Exception as e:
+                            ip_info = None
+                            st.error(f'查询失败:{e}')
+                if ip_info:
+                    st.json(ip_info[0])
+                    st.map(latitude=ip_info[1][0], longitude=ip_info[1][1])
+
 
     def streamlit_function(self):
         """
@@ -588,6 +633,7 @@ class Tool_Web:
         self.self_douyin_video()  # 抖音无水印
         self.test_ip()  # ip测试
         self.txt_for_list()  # 长文本转列表
+        self.isp_area()  # ip地址查询
 
 
 if __name__ == '__main__':
