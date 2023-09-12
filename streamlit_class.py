@@ -310,7 +310,8 @@ class Tool_Web:
             "抖音去水印",  # 7
             "Json格式化",  # 8
             "文章采集",  # 9
-            "ip代理测试",  #10
+            "ip代理测试",  # 10
+            "长文本换行转python列表",
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -549,6 +550,26 @@ class Tool_Web:
                     st.success(f'响应时间：{end_time}')
 
 
+    def txt_for_list(self):
+        if self.function_type == self.selectbox_options[11]:
+            '''文本转列表'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                texts = st.text_area(label='请输入需要转换的列表(必须有换行):')
+                button_code = st.button(label=':blue[转换]')
+            if button_code:
+                text_json = {}
+                try:
+                    texts_spilt = texts.split('\n')
+                    text_json['code'] = '1'
+                    text_json['list'] = texts_spilt
+                    st.success('转换成功！')
+                    st.json(text_json)
+                except Exception as e:
+                    st.error(f'转换失败:{e}')
+                    st.json(text_json)
+
+
+
     def streamlit_function(self):
         """
         侧边栏执行功能
@@ -565,7 +586,8 @@ class Tool_Web:
         self.article_info()  # 文章采集
         self.self_youtube_video()  # youtube视频采集
         self.self_douyin_video()  # 抖音无水印
-        self.test_ip()
+        self.test_ip()  # ip测试
+        self.txt_for_list()  # 长文本转列表
 
 
 if __name__ == '__main__':
