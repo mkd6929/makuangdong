@@ -393,6 +393,7 @@ class Tool_Web:
             "长文本换行转python列表",  # 11
             "ip位置查询",  # 12
             "电影搜索",  # 13
+            "HTML在线加载",  # 14
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -685,6 +686,16 @@ class Tool_Web:
                 with st.sidebar:
                     st.success('查询完毕')
 
+    def html_loading(self):
+        if self.function_type == self.selectbox_options[14]:
+            '''HTML在线加载'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                texts = st.text_area(label='请输入需要加载的源码:')
+                button_code = st.button(label=':blue[执行]')
+            if button_code:
+                st.markdown(texts, unsafe_allow_html=True)
+
+
 
     def streamlit_function(self):
         """
@@ -706,6 +717,7 @@ class Tool_Web:
         self.txt_for_list()  # 长文本转列表
         self.isp_area()  # ip地址查询
         self.self_mv()  # 电影搜索
+        self.html_loading()  # html加载
 
 
 if __name__ == '__main__':
