@@ -296,7 +296,7 @@ def parse_article(url):
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
     article_info = str(soup.findAll(name="div", attrs={"class": "main-left"})[0])
-    re_str = '<a href="(.*?)"|<img alt(.*?)>|<li class="excellent_articles_title">(.*?)</li>|target="_blank">|<span(.*?)</span>'
+    re_str = '<a href="(.*?)"|<img alt(.*?)>|<li class="excellent_articles_title">(.*?)</li>|target="_blank">|<span(.*?)</span>|target="_blank" title="(.*?)">'
     article = re.sub(re_str, '', article_info)
     return article
 
