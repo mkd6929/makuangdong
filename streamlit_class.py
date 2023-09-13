@@ -244,7 +244,10 @@ def format_headers(headers: str) -> json:
         new_headers_dict = {}
         for header in split_headers:
             info = header.split(':')
-            new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
+            if len(info) >= 3:
+                new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip() + ':' + info[2]})
+            else:
+                new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
         return json.dumps(new_headers_dict)
     except Exception as e:
         print(e)
