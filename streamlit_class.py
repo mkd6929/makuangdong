@@ -456,7 +456,7 @@ class Tool_Web:
                         with st.spinner('正在转换...'):
                             table = json_convert_sql(json.loads(input_message))
                             st.success('转换成功!')
-                    st.code(table)
+                    st.code(table, language='sql')
                 except Exception as e:
                     st.error(f'转换失败：{e}')
 
@@ -536,7 +536,6 @@ class Tool_Web:
                     with st.sidebar:
                         with st.spinner('正在采集...'):
                             img_list = get_img_url_list()
-                            print(img_list)
                     for imgs in img_list:
                         st.image(imgs)
                 except Exception as e:
@@ -704,8 +703,6 @@ class Tool_Web:
                 button_code = st.button(label=':blue[执行]')
             if button_code:
                 st.markdown(texts, unsafe_allow_html=True)
-
-
 
     def streamlit_function(self):
         """
