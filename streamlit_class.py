@@ -593,7 +593,7 @@ class Tool_Web:
                         st.header('无水印视频链接：')
                         st.write(douyin_video_url[0])
                         # st.video(douyin_video_url)
-                        st.download_button('保存', douyin_video_url[1])
+                        st.download_button('保存', data=douyin_video_url[1], file_name='抖音无水印.mp4')
                     else:
                         st.error(f'抓取失败')
                 except Exception as e:
