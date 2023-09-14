@@ -30,7 +30,7 @@ def douyin_video(url):
     """
     抖音无水印视频
     :param url:
-    :return:
+    :return:无水印链接, 视频源码, 作者, 视频名称
     """
     urls = get_douyin_id(url)
     headers = {
@@ -44,13 +44,14 @@ def douyin_video(url):
             url_id = re.findall('(\d\d\d\d\d\d\d\d+)', urls)[0]
             url = f'https://www.douyin.com/discover?modal_id={url_id}'
             response = requests.get(url, headers=headers)
-            print(response.text)
             re_html = re.findall('type="application/json">(.*?)</script>', response.text)[0]
             decode_html = urllib.parse.unquote(re_html)  # 对html进行解码
+            video_name = re.findall('"desc":"(.*?)"', decode_html)[0]
+            auth = re.findall('"enterpriseVerifyReason":"(.*?)"', decode_html)[0]
             video_url = 'https://' + re.findall('"playApi":"//(.*?)"', decode_html)[0]
             video_content = requests.get(url=video_url, headers=headers).content
-            print(f'无水印视频链接：{video_url}')
-            return video_url, video_content
+            print(f'{video_name}无水印视频链接：{video_url}, {auth}')
+            return video_url, video_content, auth, video_name
         except Exception as e:
             print(e)
             code += 1
@@ -590,9 +591,11 @@ class Tool_Web:
                             else:
                                 st.error(f'抓取失败')
                     if douyin_video_url:
-                        st.header('无水印视频链接：')
-                        st.write(douyin_video_url[0])
-                        # st.video(douyin_video_url)
+                        video_info = douyin_video_url
+                        st.title(video_info[3])
+                        st.write(f'作者:{video_info[2]}')
+                        st.write(f'无水印视频链接：{video_info[0]}')
+                        st.video(video_info[1])
                         st.download_button('保存', data=douyin_video_url[1], file_name='抖音无水印.mp4')
                     else:
                         st.error(f'抓取失败')
