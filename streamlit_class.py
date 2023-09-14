@@ -592,7 +592,7 @@ class Tool_Web:
                                 st.error(f'抓取失败')
                     if douyin_video_url:
                         video_info = douyin_video_url
-                        st.title(video_info[3])
+                        st.header(video_info[3])
                         st.write(f'作者:{video_info[2]}')
                         st.write(f'无水印视频链接：{video_info[0]}')
                         st.video(video_info[1])
