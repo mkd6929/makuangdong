@@ -48,8 +48,9 @@ def douyin_video(url):
             re_html = re.findall('type="application/json">(.*?)</script>', response.text)[0]
             decode_html = urllib.parse.unquote(re_html)  # 对html进行解码
             video_url = 'https://' + re.findall('"playApi":"//(.*?)"', decode_html)[0]
+            video_content = requests.get(url=video_url, headers=headers).content
             print(f'无水印视频链接：{video_url}')
-            return video_url
+            return video_url, video_content
         except Exception as e:
             print(e)
             code += 1
@@ -585,13 +586,14 @@ class Tool_Web:
                         with st.spinner('正在采集...'):
                             douyin_video_url = douyin_video(new_urls)
                             if douyin_video_url:
-                                st.success('进入视频链接右键保存')
+                                st.success('抓取成功')
                             else:
                                 st.error(f'抓取失败')
                     if douyin_video_url:
                         st.header('无水印视频链接：')
-                        st.write(douyin_video_url)
+                        st.write(douyin_video_url[0])
                         # st.video(douyin_video_url)
+                        st.download_button('保存', douyin_video_url[1])
                     else:
                         st.error(f'抓取失败')
                 except Exception as e:
