@@ -572,7 +572,7 @@ class Tool_Web:
     def self_douyin_video(self):
         if self.function_type == self.selectbox_options[7]:
             '''抖音去水印'''
-            st.title(f'{self.selectbox_options[7]}')
+            # st.title(f'{self.selectbox_options[7]}')
             with st.sidebar:  # 需要在侧边栏内展示的内容
                 input_message = st.text_input(label='请输入视频链接:')
                 urls = re.findall('(https://v.douyin.com/.*?/)', input_message)
