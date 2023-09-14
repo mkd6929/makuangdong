@@ -573,12 +573,17 @@ class Tool_Web:
             st.title(f'{self.selectbox_options[7]}')
             with st.sidebar:  # 需要在侧边栏内展示的内容
                 input_message = st.text_input(label='请输入视频链接:')
+                urls = re.findall('(https://v.douyin.com/.*?/)', input_message)
+                if urls:
+                    new_urls = urls[0]
+                else:
+                    new_urls = input_message
                 button_code = st.button(label=':blue[采集]')
             if button_code:
                 try:
                     with st.sidebar:
                         with st.spinner('正在采集...'):
-                            douyin_video_url = douyin_video(input_message)
+                            douyin_video_url = douyin_video(new_urls)
                             if douyin_video_url:
                                 st.success('进入视频链接右键保存')
                             else:
