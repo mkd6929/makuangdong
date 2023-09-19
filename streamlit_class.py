@@ -11,6 +11,31 @@ import pdfplumber
 import time
 
 
+def new_main():
+    key_list = ['美元', '欧元', '英镑', '日元', '澳元', '加元', '港元']
+    timestamp = int(time.time() * 1000)
+    headers = {
+        "Referer": "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=88093251_42_hao_pg&wd=%E5%AE%9E%E6%97%B6%E6%B1%87%E7%8E%87&fenlei=256&rsv_pq=0xd2c6b0be00002071&rsv_t=e1bdGHfcieWM8d6CEYiR9kMsdjsQ5hyAGkarq3H6WgHTme09E%2FTJV%2FXXso%2F%2B&rqlang=en&rsv_dl=tb&rsv_enter=1&rsv_sug3=11&rsv_sug1=11&rsv_sug7=100&rsv_sug2=0&rsv_btype=i&prefixsug=%25E5%25AE%259E%25E6%2597%25B6%25E6%25B1%2587%25E7%258E%2587&rsp=7&inputT=2088&rsv_sug4=2088",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+    }
+    info_list = []
+    for key in key_list:
+        url = "https://sp0.baidu.com/5LMDcjW6BwF3otqbppnN2DJv/finance.pae.baidu.com/vapi/async"
+        params = {
+            "from_money": f"{key}",
+            "to_money": "人民币",
+            "from_money_num": "1",
+            "srcid": "5293",
+            "sid": "26350",
+            "cb": f"jsonp_{timestamp}_89470"
+        }
+        response = requests.get(url=url, headers=headers, params=params)
+        new_exch = re.findall(f'"exchange_desc2":"1人民币=(.*?){key}"', response.text)[0]
+        info = '1人民币=' + new_exch + key
+        info_list.append(info)
+    return info_list
+
+
 @st.cache_data
 def get_douyin_id(url):
     """
@@ -396,6 +421,7 @@ class Tool_Web:
             "ip位置查询",  # 12
             "电影搜索",  # 13
             "HTML在线加载",  # 14
+            "实时货币", # 14
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -704,6 +730,14 @@ class Tool_Web:
             if button_code:
                 st.markdown(texts, unsafe_allow_html=True)
 
+    def exchange(self):
+        if self.function_type == self.selectbox_options[15]:
+            '''实时货币'''
+            info_list = new_main()
+            for info in info_list:
+                st.success(info)
+
+
     def streamlit_function(self):
         """
         侧边栏执行功能
@@ -725,6 +759,7 @@ class Tool_Web:
         self.isp_area()  # ip地址查询
         self.self_mv()  # 电影搜索
         self.html_loading()  # html加载
+        self.exchange()  # 实时货币
 
 
 if __name__ == '__main__':
