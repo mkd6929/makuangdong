@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import pdfplumber
 import time
 
-
+@st.cache_data
 def new_main():
     key_list = ['美元', '欧元', '英镑', '日元', '澳元', '加元', '港元']
     timestamp = int(time.time() * 1000)
