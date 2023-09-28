@@ -9,9 +9,137 @@ import urllib
 from bs4 import BeautifulSoup
 import pdfplumber
 import time
+import threading
+import queue
+from lxml import etree
 
-@st.cache_data
+
+class Worker(threading.Thread):
+    def __init__(self, names, queues):
+        threading.Thread.__init__(self)
+        self.getName = names
+        self.queue = queues
+        self.start()  # 执行run()
+
+    def run(self):
+        while True:
+            if self.queue.empty():
+                break
+            foo = self.queue.get()
+            print(f'{self.getName}当前任务链接:{foo}')
+            verfy_ip(foo)
+            self.queue.task_done()
+
+
+def get_kuaidaili():
+    """
+    https://www.kuaidaili.com/free/
+    :return:
+    """
+    headers = {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    info_list = []
+    for page in range(1, 4):
+        url = f'https://www.kuaidaili.com/free/inha/{page}/'
+        response = requests.get(url=url, headers=headers)
+        html = etree.HTML(response.text)
+        ip_list = html.xpath('''//table[@class='table table-b table-bordered table-striped']//tr/td[1]//text()''')
+        port_list = html.xpath('''//table[@class='table table-b table-bordered table-striped']//tr/td[2]//text()''')
+        ip_zip = zip(ip_list, port_list)
+        for ip in ip_zip:
+            new_ip = ip[0] + ':' + ip[1]
+            info_list.append(new_ip)
+        time.sleep(3)
+    return list(set(info_list))
+
+
+def get_pro_list():
+    info_list = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    url = 'http://proxylist.fatezero.org/proxy.list'
+    response = requests.get(url=url, headers=headers)
+    ip_list = re.findall('"host": "(.*?)"', response.text)
+    port_list = re.findall('"port": (.*?),', response.text)
+    ip_zip = zip(ip_list, port_list)
+    for ip in ip_zip:
+        new_ip = ip[0] + ':' + ip[1]
+        info_list.append(new_ip)
+    return list(set(info_list))
+
+
+def get_ip3366():
+    info_list = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    url = 'http://www.ip3366.net/'
+    response = requests.get(url=url, headers=headers)
+    html = etree.HTML(response.text)
+    ip_list = html.xpath('''//table[@class='table table-bordered table-striped']//tr/td[1]//text()''')
+    port_list = html.xpath('''//table[@class='table table-bordered table-striped']//tr/td[2]//text()''')
+    ip_zip = zip(ip_list, port_list)
+    for ip in ip_zip:
+        new_ip = ip[0] + ':' + ip[1]
+        info_list.append(new_ip)
+    return list(set(info_list))
+
+
+def seofangfa():
+    info_list = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+    }
+    url = 'http://www.ip3366.net/'
+    response = requests.get(url=url, headers=headers)
+    response.encoding = 'utf-8'
+    html = etree.HTML(response.text)
+    ip_list = html.xpath('''//tr/td[1]//text()''')
+    port_list = html.xpath('''//tr/td[2]//text()''')
+    ip_zip = zip(ip_list, port_list)
+    for ip in ip_zip:
+        new_ip = ip[0] + ':' + ip[1]
+        info_list.append(new_ip)
+    return list(set(info_list))
+
+
+def ip_main():
+    ip_list = get_kuaidaili() + get_pro_list() + get_ip3366() + seofangfa()
+    return ip_list
+
+
+def verfy_ip(ip):
+    """
+    判断ip有效性
+    :param ip:
+    :return:
+    """
+    url = 'https://httpbin.org/get'
+    num = 0
+    while True:
+        num += 1
+        if num == 5:
+            break
+        try:
+            proxies = {
+                "http": f"http://{ip}",
+                "https": f"http://{ip}",
+            }
+            response = requests.get(url, proxies=proxies, timeout=5).json()
+            origin = json.loads(response)["origin"]
+            if str(origin) in str(ip):
+                info_ip.append(ip)
+        except Exception as e:
+            print(f'验证{ip}失败:{e}, 进行第{num}次尝试验证...')
+
+
 def new_main():
+    """
+    实时货币功能
+    :return:
+    """
     key_list = ['美元', '欧元', '英镑', '日元', '澳元', '加元', '港元']
     timestamp = int(time.time() * 1000)
     headers = {
@@ -402,7 +530,6 @@ class Tool_Web:
     """
     工具页面
     """
-
     def __init__(self):
         self.function_type = None  # 功能类别
         self.selectbox_options = (
@@ -421,7 +548,8 @@ class Tool_Web:
             "ip位置查询",  # 12
             "电影搜索",  # 13
             "HTML在线加载",  # 14
-            "实时货币", # 14
+            "实时货币",  # 15
+            "ip代理获取", # 16
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -738,6 +866,32 @@ class Tool_Web:
                 st.success(info)
 
 
+    def provide_ip(self):
+        if self.function_type == self.selectbox_options[16]:
+            '''ip代理提取'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                button_code = st.button(label=':blue[查询]')
+            if button_code:
+                ip_lists = ip_main()
+                queues = queue.Queue()
+                for ips in ip_lists:
+                    queues.put(ips)
+                st.success(f'共获取到了{len(ip_lists)}条代理')
+                st.text(ip_lists)
+                with st.sidebar:
+                    with st.spinner('正在验证ip的有效性...'):
+                        try:
+                            for i in range(len(ip_lists)):
+                                name = f'线程{i}解析'
+                                threadName = 'Thread' + str(name)
+                                Worker(threadName, queues)
+                            queues.join()
+                            st.success('验证完毕')
+                        except Exception as e:
+                            st.error(f'验证失败:{e}')
+                st.success(info_ip)
+
+
     def streamlit_function(self):
         """
         侧边栏执行功能
@@ -760,8 +914,10 @@ class Tool_Web:
         self.self_mv()  # 电影搜索
         self.html_loading()  # html加载
         self.exchange()  # 实时货币
+        self.provide_ip()  # ip代理获取
 
 
 if __name__ == '__main__':
+    info_ip = []
     tool = Tool_Web()
     tool.streamlit_function()
