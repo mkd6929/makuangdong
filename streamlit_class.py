@@ -879,6 +879,7 @@ class Tool_Web:
                 for ips in ip_lists:
                     # st.text(f'{ips}已入验证队列...')
                     queues.put(ips)
+                st.text(f'所有ip代理已入验证队列...')
                 with st.sidebar:
                     with st.spinner('正在验证ip的有效性...'):
                         try:
