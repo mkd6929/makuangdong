@@ -120,14 +120,14 @@ def verfy_ip(ip):
     num = 0
     while True:
         num += 1
-        if num == 5:
+        if num == 10:
             break
         try:
             proxies = {
                 "http": f"http://{ip}",
                 "https": f"http://{ip}",
             }
-            response = requests.get(url, proxies=proxies, timeout=5).json()
+            response = requests.get(url, proxies=proxies, timeout=10).text
             origin = json.loads(response)["origin"]
             if str(origin) in str(ip):
                 info_ip.append(ip)
