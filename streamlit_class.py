@@ -772,7 +772,7 @@ class Tool_Web:
                             url = 'https://httpbin.org/get'
                             try:
                                 start_time = time.time()
-                                response = requests.get(url=url, proxies=proxies)
+                                response = requests.get(url=url, proxies=proxies, timeout=15)
                                 st.success('测试完毕')
                                 end_time = time.time() - start_time
                             except Exception as e:
