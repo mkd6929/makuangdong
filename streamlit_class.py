@@ -877,7 +877,7 @@ class Tool_Web:
                 st.success(f'共获取到了{len(ip_lists)}条代理')
                 st.text(ip_lists)
                 for ips in ip_lists:
-                    st.text(f'{ips}已入验证队列...')
+                    # st.text(f'{ips}已入验证队列...')
                     queues.put(ips)
                 with st.sidebar:
                     with st.spinner('正在验证ip的有效性...'):
@@ -890,7 +890,7 @@ class Tool_Web:
                             st.success('验证完毕')
                         except Exception as e:
                             st.error(f'验证失败:{e}')
-                st.success(info_ip)
+                st.json({'IpList': info_ip})
 
 
     def streamlit_function(self):
