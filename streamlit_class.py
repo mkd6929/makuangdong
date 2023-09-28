@@ -810,7 +810,7 @@ class Tool_Web:
         if self.function_type == self.selectbox_options[12]:
             '''ip位置查询'''
             with st.sidebar:  # 需要在侧边栏内展示的内容
-                texts = st.text_input(label='请输入需要查询的ip:')
+                texts = st.text_input(label='请输入需要查询的ip(请去掉ip的端口):')
                 button_code = st.button(label=':blue[查询]')
             if button_code:
                 with st.sidebar:
