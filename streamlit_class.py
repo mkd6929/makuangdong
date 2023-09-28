@@ -890,7 +890,7 @@ class Tool_Web:
                             st.success('验证完毕')
                         except Exception as e:
                             st.error(f'验证失败:{e}')
-                st.json({'IpList': info_ip})
+                st.json({'IpList': list(set(info_ip))})
 
 
     def streamlit_function(self):
