@@ -127,10 +127,10 @@ def verfy_ip(ip):
                 "http": f"http://{ip}",
                 "https": f"http://{ip}",
             }
-            response = requests.get(url, proxies=proxies, timeout=10).text
-            origin = json.loads(response)["origin"]
-            if str(origin) in str(ip):
-                info_ip.append(ip)
+            requests.get(url, proxies=proxies, timeout=10)
+            # origin = json.loads(response)["origin"]
+            # if str(origin) in str(ip):
+            info_ip.append(ip)
         except Exception as e:
             print(f'验证{ip}失败:{e}, 进行第{num}次尝试验证...')
 
