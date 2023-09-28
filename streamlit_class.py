@@ -874,10 +874,11 @@ class Tool_Web:
             if button_code:
                 ip_lists = ip_main()
                 queues = queue.Queue()
-                for ips in ip_lists:
-                    queues.put(ips)
                 st.success(f'共获取到了{len(ip_lists)}条代理')
                 st.text(ip_lists)
+                for ips in ip_lists:
+                    st.text(f'{ips}已入验证队列...')
+                    queues.put(ips)
                 with st.sidebar:
                     with st.spinner('正在验证ip的有效性...'):
                         try:
