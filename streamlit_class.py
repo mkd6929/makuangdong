@@ -872,7 +872,9 @@ class Tool_Web:
             with st.sidebar:  # 需要在侧边栏内展示的内容
                 button_code = st.button(label=':blue[查询]')
             if button_code:
-                ip_lists = ip_main()
+                with st.sidebar:
+                    with st.spinner('正在查询ip...'):
+                        ip_lists = ip_main()
                 queues = queue.Queue()
                 st.success(f'共获取到了{len(ip_lists)}条代理')
                 st.text(ip_lists)
