@@ -42,15 +42,18 @@ def get_kuaidaili():
     info_list = []
     for page in range(1, 4):
         url = f'https://www.kuaidaili.com/free/inha/{page}/'
-        response = requests.get(url=url, headers=headers)
-        html = etree.HTML(response.text)
-        ip_list = html.xpath('''//table[@class='table table-b table-bordered table-striped']//tr/td[1]//text()''')
-        port_list = html.xpath('''//table[@class='table table-b table-bordered table-striped']//tr/td[2]//text()''')
-        ip_zip = zip(ip_list, port_list)
-        for ip in ip_zip:
-            new_ip = ip[0] + ':' + ip[1]
-            info_list.append(new_ip)
-        time.sleep(3)
+        try:
+            response = requests.get(url=url, headers=headers)
+            html = etree.HTML(response.text)
+            ip_list = html.xpath('''//table[@class='table table-b table-bordered table-striped']//tr/td[1]//text()''')
+            port_list = html.xpath('''//table[@class='table table-b table-bordered table-striped']//tr/td[2]//text()''')
+            ip_zip = zip(ip_list, port_list)
+            for ip in ip_zip:
+                new_ip = ip[0] + ':' + ip[1]
+                info_list.append(new_ip)
+            time.sleep(3)
+        except Exception as e:
+            print(e)
     return list(set(info_list))
 
 
@@ -60,13 +63,16 @@ def get_pro_list():
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
     }
     url = 'http://proxylist.fatezero.org/proxy.list'
-    response = requests.get(url=url, headers=headers)
-    ip_list = re.findall('"host": "(.*?)"', response.text)
-    port_list = re.findall('"port": (.*?),', response.text)
-    ip_zip = zip(ip_list, port_list)
-    for ip in ip_zip:
-        new_ip = ip[0] + ':' + ip[1]
-        info_list.append(new_ip)
+    try:
+        response = requests.get(url=url, headers=headers)
+        ip_list = re.findall('"host": "(.*?)"', response.text)
+        port_list = re.findall('"port": (.*?),', response.text)
+        ip_zip = zip(ip_list, port_list)
+        for ip in ip_zip:
+            new_ip = ip[0] + ':' + ip[1]
+            info_list.append(new_ip)
+    except Exception as e:
+        print(e)
     return list(set(info_list))
 
 
@@ -76,37 +82,35 @@ def get_ip3366():
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
     }
     url = 'http://www.ip3366.net/'
-    response = requests.get(url=url, headers=headers)
-    html = etree.HTML(response.text)
-    ip_list = html.xpath('''//table[@class='table table-bordered table-striped']//tr/td[1]//text()''')
-    port_list = html.xpath('''//table[@class='table table-bordered table-striped']//tr/td[2]//text()''')
-    ip_zip = zip(ip_list, port_list)
-    for ip in ip_zip:
-        new_ip = ip[0] + ':' + ip[1]
-        info_list.append(new_ip)
+    try:
+        response = requests.get(url=url, headers=headers)
+        html = etree.HTML(response.text)
+        ip_list = html.xpath('''//table[@class='table table-bordered table-striped']//tr/td[1]//text()''')
+        port_list = html.xpath('''//table[@class='table table-bordered table-striped']//tr/td[2]//text()''')
+        ip_zip = zip(ip_list, port_list)
+        for ip in ip_zip:
+            new_ip = ip[0] + ':' + ip[1]
+            info_list.append(new_ip)
+    except Exception as e:
+        print(e)
     return list(set(info_list))
 
 
-def seofangfa():
+def xiaojie():
     info_list = []
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
-    }
-    url = 'http://www.ip3366.net/'
-    response = requests.get(url=url, headers=headers)
-    response.encoding = 'utf-8'
-    html = etree.HTML(response.text)
-    ip_list = html.xpath('''//tr/td[1]//text()''')
-    port_list = html.xpath('''//tr/td[2]//text()''')
-    ip_zip = zip(ip_list, port_list)
-    for ip in ip_zip:
-        new_ip = ip[0] + ':' + ip[1]
-        info_list.append(new_ip)
+    url = 'https://decode.xiaojieapi.com/api/proxy.php'
+    try:
+        response = requests.get(url).json()
+        for proxy in response['proxy']:
+            ip = proxy['ip'] + ":" + proxy['port']
+            info_list.append(ip)
+    except Exception as e:
+        print(e)
     return list(set(info_list))
 
 
 def ip_main():
-    ip_list = get_kuaidaili() + get_pro_list() + get_ip3366() + seofangfa()
+    ip_list = get_kuaidaili() + get_pro_list() + get_ip3366() + xiaojie()
     return ip_list
 
 
