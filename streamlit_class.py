@@ -14,6 +14,61 @@ import queue
 from lxml import etree
 
 
+def get_ai(q):
+    """
+    调用google的bard接口
+    :return:
+    """
+    headers = {
+      "accept": "*/*",
+      "accept-encoding": "gzip, deflate, br",
+      "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+      "content-length": "1760",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+      "cookie": "SEARCH_SAMESITE=CgQIq5kB; OGPC=19039026-1:; 1P_JAR=2023-11-01-06; AEC=Ackid1Rh4NwVBc2b1qWVGDnZWuKDh_jg6jA24UPjI_88b17U01tyqPU8zg; _ga=GA1.1.151380725.1698832645; SID=cggXzgPvgYPLcKWRX0Sp50XjB-NV8QQ2Xp7aIyr24XGOCy55jVj6wSr-Mar_FYBu17s9Kg.; __Secure-1PSID=cggXzgPvgYPLcKWRX0Sp50XjB-NV8QQ2Xp7aIyr24XGOCy55ErtaCc_3Bu1qEVTh2rzO0w.; __Secure-3PSID=cggXzgPvgYPLcKWRX0Sp50XjB-NV8QQ2Xp7aIyr24XGOCy55NRFoSr3AIROKkLkPtKMtnw.; HSID=AQdELMgtdBIEu4gxe; SSID=A49zBp75yGtzURfcx; APISID=883AplbUefFeuDGK/Ab9XH4NkqQKtd1y_h; SAPISID=WpFQUWTvbl24Yh-O/ANnMGt4fnq5tlAawQ; __Secure-1PAPISID=WpFQUWTvbl24Yh-O/ANnMGt4fnq5tlAawQ; __Secure-3PAPISID=WpFQUWTvbl24Yh-O/ANnMGt4fnq5tlAawQ; NID=511=UaDrNH2Wd86MDpqcFwyLPTRW8cmaZjCMPdwrRAawQSTCKDcy48S9PDcofl_k2m6tunUaRQmBP7Sf3qTs621Jt0cRBNb1K18OTWbD-Ur1nGnEkzidxJzftx5MhOoFLKpli_PO2Ebx-2yNHJv38-JBOp9kUxf1fZ-JV_vUzD30UIr-va0RKbIJd9X97lXQF2sceRJpS7FWJGInM0BvA4NWQIl1dUNYoxpdA_aD775-irvWZLc_jJ4KS8wvEPDTn3qD22fQTEKWfta4kzlD3Dk9kg2PePX3WNPniznpchnyRqlIhjmFPeRzRTE3WYLHrAv41Iv-a2q-n_Jrsw7tD99OtCcPGb-F49cPp7p0MWWo6ZmVQCNWsg1BjOaCMoY1PmCZPt0axh8Rfo02eSsOR_ioSnnJ3Y6n5re1_kIvwFEt_t-to6b4A6siOuiTSXx8tq0hp9dYfXiyVzLmsYdIuQZNCUxsdkORqIs-haRiTaIdKHBM; SIDCC=ACA-OxM3ylIR3JcjbyzfldzouwkB8SLWgxNUchmsvpdCbGdTFIxmnNeEzYvDoqiK5tvpOafquWQ; __Secure-1PSIDCC=ACA-OxM6LDOo2rE-5pFmUlSg7J23ZYterTSK-y07VjMdxXXh18W4khF6uxt5wQPEinEEgfdVtQ; __Secure-3PSIDCC=ACA-OxPYNjhMProsugh6PXRngQmBrRbuVOhBbOo0bxo904hZCNIJpzXAGeUH8II7MEw8RjmWZO0; _ga_WC57KJ50ZZ=GS1.1.1699253024.4.1.1699254025.0.0.0",
+      "origin": "https://bard.google.com",
+      "referer": "https://bard.google.com/",
+      "sec-ch-ua": "Not;A=Brand;v=8, Chromium;v=117, Google Chrome;v=117",
+      "sec-ch-ua-arch": "x86",
+      "sec-ch-ua-bitness": "64",
+      "sec-ch-ua-full-version": "117.0.5938.92",
+      "sec-ch-ua-full-version-list": "Not;A=Brand;v=8.0.0.0, Chromium;v=117.0.5938.92, Google Chrome;v=117.0.5938.92",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-model": "",
+      "sec-ch-ua-platform": "Windows",
+      "sec-ch-ua-platform-version": "10.0.0",
+      "sec-ch-ua-wow64": "?0",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "same-origin",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+      "x-same-domain": "1"
+    }
+    url = "https://bard.google.com/_/BardChatUi/data/assistant.lamda.BardFrontendService/StreamGenerate"
+    params = {
+          "bl": "boq_assistant-bard-web-server_20231031.09_p7",
+          "f.sid": "-3006553200840392195",
+          "hl": "zh-CN",
+          "_reqid": "6154372",
+          "rt": "c"
+    }
+    info_encode = parse.quote(q.replace('"', '').replace("'", '').encode('utf-8'))
+    data = f"f.req=%5Bnull%2C%22%5B%5B%5C%22{info_encode}%5C%22%2C0%2Cnull%2C%5B%5D%2Cnull%2Cnull%2C0%5D%2C%5B%5C%22zh-CN%5C%22%5D%2C%5B%5C%22%5C%22%2C%5C%22%5C%22%2C%5C%22%5C%22%2Cnull%2Cnull%2C%5B%5D%5D%2C%5C%22!bG-lbzfNAAYRMHX6MTBCV4U17GP-IHg7ADQBEArZ1FqalkAoFE3m30mmj8j63pe9v6tVZZD3X3198AwfzFG9irOwEQ70YwJKrv4F054lAgAAAE9SAAAABGgBB5kDUh_gPQ94uvclHzh2MNvCd0zN7XTCJPIyLcJirR3Llr8U8lgrrsBILlXzfiJYnR-W-Qw7qLHUjeu4ZlykHdv4prMPmiViSIPqPaBCYoL2dPZ1x7fqR-GqzVzwlcCqP0ae4Nc5986zb0WhG_R4irAERKui6J4bedS12B0CReSNkHq42lI1FRgDVSO-PTexky4Wc2cZIjPIK5hCVTLkSJY9OUj5V-C3m7aedOn2aJ0JFYs35fz8kyQxJarfVAy3zWcR1gv0dDyLRdreiOi2zQj4ymAwHvEz7b5SjTgG4BIjTRD0DxOkIhMsRCYqsOxpZS15i88neWqGEbetv9_onED-n6dUnEqI2OAk8S99fBr16XeYaYfXNmTND5s2kqAodVAjETu0vyid0dzJOP4PC5LI3gp2KF2-OnuGeDu46tokCiEsptoC3_veTdHys64UC_sASNfbt7Lb97NJqS7PGC24RxdQHEA0bQ9_ErgAmQCw8JxniZSkvHVFfEvku7cEyrktQXRzFcKHi4DRLRde1KZSRPvKIUugt95p5Ap0riSrw-dUesk9EGI93SLCO7DWTKDJjyf1kScGYLf7iyR8KRAm1Ohzl3f55jQZUiyCxHub658w4op-4D9HTosI9Gd4_b5vHmNtADkNNtEj-Gmor9qg5AAa2TD9JQBdvU-qkRpGh37lZUlaBO0zWVoRSvcVhrcENmUvwc8tl_oLH8hkiSGzDth6tsAk-LR3jF797ZhdKrHyHte3yW1jVDMzo8seNk-IUqGLLh1wMp9FeIcYUBTtP42a63Y_2C_KUPiTYjxam_WC7FB3pCLIhdKL0be0ZFZ-IS9lXnJAOCcEQALbp7P6K9t9FMPWRZYHggRKuQv1Yw-RyOic8BHdc6x1uhCMabJ7jf3q0lBMqa0NJI3IyhkKhf7T1vpoQfHgcQNPajbj6e_gtzMqAuNc5v2QNXKhaqJGXViV4UFmhA3jb3uyh4I8xweiNohTcv1p13Pt0rWdrNKHhY3zAYYQBV7HV4MbgTuONb0AGQWzUHBZJPm-VA7hKrqZKM0s8zMMmpbqN0v_pG9fx-X4QaVaL0D93jL0YHLhiganAA0WZBH-JLFT0ijIBEMtP-mGns2uak4Mihw-dbYE8Qk%5C%22%2C%5C%228db2d22830defc9b02f883791dfa6e21%5C%22%2Cnull%2C%5B0%5D%2C0%2C%5B%5D%2C%5B%5D%2C1%2C0%5D%22%5D&at=AOTFbH4tbSllGangB8fWTStk1gfv%3A1699254350174"
+    code = 0
+    while True:
+        if code == 3:
+            return '回答失败！'
+        try:
+            response = requests.post(url=url, params=params, headers=headers, data=data)
+            info = response.text.replace('\\', '')
+            infos = re.findall('",\["(.*?)"],\[]', info)
+            for cont in infos:
+                return cont
+        except Exception as e:
+            print(e)
+            code += 1
+
+
 class Worker(threading.Thread):
     def __init__(self, names, queues):
         threading.Thread.__init__(self)
@@ -553,7 +608,8 @@ class Tool_Web:
             "电影搜索",  # 13
             "HTML在线加载",  # 14
             "实时货币",  # 15
-            "ip代理获取", # 16
+            "ip代理获取",  # 16
+            "GPT问答",  # 17
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -899,6 +955,23 @@ class Tool_Web:
                             st.error(f'验证失败:{e}')
                 st.json({'IpList': list(set(info_ip))})
 
+    def gpt(self):
+        if self.function_type == self.selectbox_options[17]:
+            '''GPT问答'''
+            prompt = st.chat_input("请输入问题:")
+            if prompt:
+                with st.chat_message("user"):
+                    st.write(f"问题：{prompt}")
+                with st.spinner('正在编写答案'):
+                    info = get_ai(prompt)
+                with st.chat_message("👋"):
+                    if 'nn' in info:
+                        st.markdown(f"回答：")
+                        for i in info.split('n'):
+                            st.markdown(f"{i}")
+                    else:
+                        st.markdown(f"{info}")
+
 
     def streamlit_function(self):
         """
@@ -923,6 +996,7 @@ class Tool_Web:
         self.html_loading()  # html加载
         self.exchange()  # 实时货币
         self.provide_ip()  # ip代理获取
+        self.gpt()  # gpt问答
 
 
 if __name__ == '__main__':
