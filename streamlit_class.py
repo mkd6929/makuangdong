@@ -965,6 +965,7 @@ class Tool_Web:
                 with st.spinner('正在编写答案'):
                     info = get_ai(prompt)
                 with st.chat_message("👋"):
+                    st.success('成功')
                     if 'nn' in info:
                         st.markdown(f"回答：")
                         for i in info.split('n'):
