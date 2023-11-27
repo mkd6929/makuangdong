@@ -1000,7 +1000,10 @@ class Tool_Web:
             if button_code:
                 poems_info = get_poems(texts)
                 title = poems_info[0].strip()
-                st.header(title) if title else st.header(texts)
+                if title:
+                    st.header(title)
+                else:
+                    st.header(texts)
                 auth = poems_info[2].strip() + poems_info[1].strip()
                 text_list = poems_info[3]
                 st.write(auth)
