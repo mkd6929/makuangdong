@@ -988,7 +988,7 @@ class Tool_Web:
                 with st.spinner('正在编写答案'):
                     info = get_ai(prompt)
                 with st.chat_message("👋"):
-                    st.markdown(f"{info}")
+                    st.write(f"{info}")
 
 
     def poems(self):
