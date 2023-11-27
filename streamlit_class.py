@@ -1003,9 +1003,9 @@ class Tool_Web:
                 st.header(title) if title else st.header(texts)
                 auth = poems_info[2].strip() + poems_info[1].strip()
                 text_list = poems_info[3]
-                st.text(auth)
+                st.write(auth)
                 for txt in text_list:
-                    st.info(txt)
+                    st.write(txt)
                 with st.sidebar:
                     st.success('查询完毕')
 
