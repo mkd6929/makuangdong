@@ -14,6 +14,32 @@ import queue
 from lxml import etree
 
 
+def get_poems(key):
+    """
+    查询古诗文
+    :param key:
+    :return:
+    """
+    headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"}
+    url = "https://so.gushiwen.cn/search.aspx"
+    params = {"value": f"{key}", "valuej": f"{key[0]}"}
+    try:
+        response = requests.get(url=url, headers=headers, params=params)
+        html = etree.HTML(response.text)
+        title = html.xpath('''//div[@class="sons"][1]//b//text()''')[0].strip()
+        author = html.xpath('''//div[@class="sons"][1]//p[@class="source"]//a//img/@alt''')[0].strip()
+        dynasty = html.xpath('''//div[@class="sons"][1]//p[@class="source"]//a//text()''')[-1].strip()
+        texts = html.xpath('''//div[@class="sons"][1]//div[@class="contson"]//text()''')
+        # print(f'标题:{title}') if title else print(f'标题:{key}')
+        # print(f'作者:{dynasty}{author}')
+        # print('正文:')
+        return title, author, dynasty, texts
+        # for txt in texts:
+        #     print(txt.strip())
+    except Exception as e:
+        print(f'采集:{key}---失败--->失败原因:{e}')
+
+
 def get_ai(q):
     """
     调用google的bard接口
@@ -606,6 +632,7 @@ class Tool_Web:
             "实时货币",  # 15
             "ip代理获取",  # 16
             "GPT问答",  # 17
+            "古诗文查询", # 18
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -961,8 +988,26 @@ class Tool_Web:
                 with st.spinner('正在编写答案'):
                     info = get_ai(prompt)
                 with st.chat_message("👋"):
-
                     st.markdown(f"{info}")
+
+
+    def poems(self):
+        if self.function_type == self.selectbox_options[18]:
+            '''古诗文查询'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                texts = st.text_input(label='请输入古诗名称:')
+                button_code = st.button(label=':blue[查询]')
+            if button_code:
+                poems_info = get_poems(texts)
+                title = poems_info[0].strip()
+                st.header(title) if title else st.header(texts)
+                auth = poems_info[2].strip() + poems_info[1].strip()
+                text_list = poems_info[3]
+                st.text(auth)
+                for txt in text_list:
+                    st.info(txt)
+                with st.sidebar:
+                    st.success('查询完毕')
 
 
     def streamlit_function(self):
@@ -989,6 +1034,7 @@ class Tool_Web:
         self.exchange()  # 实时货币
         self.provide_ip()  # ip代理获取
         self.gpt()  # gpt问答
+        self.poems()  # 古诗文查询
 
 
 if __name__ == '__main__':
