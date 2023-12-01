@@ -42,53 +42,71 @@ def get_poems(key):
 
 def get_ai(q):
     """
-    调用google的bard接口
+    调用https://free.ai.cc/talk的接口
     :return:
     """
     headers = {
-      "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
-      "cookie": "SEARCH_SAMESITE=CgQIq5kB; _ga=GA1.1.151380725.1698832645; SID=cwgXzn2Ias6KRxXcNxX5l_EwD4yZ6WFhTFfPDNmj0Wsb2SxjgKPRQB-CsGtoZ3Q887_52Q.; __Secure-1PSID=cwgXzn2Ias6KRxXcNxX5l_EwD4yZ6WFhTFfPDNmj0Wsb2Sxjf4K80kbG9bVcwOWh2KfgdQ.; __Secure-3PSID=cwgXzn2Ias6KRxXcNxX5l_EwD4yZ6WFhTFfPDNmj0Wsb2Sxj1GPDfk4fqU2kqVCSbUxiYQ.; HSID=ADCNhs_2cEzIgJmCd; SSID=AhFtj8rxdcI9KQhuP; APISID=PdAgNkYsQ14N46ms/AXYJCz54Jyj7bKmoj; SAPISID=fb-NMZ_op7y8OPw3/AOVhSOSvN4OsYzGn6; __Secure-1PAPISID=fb-NMZ_op7y8OPw3/AOVhSOSvN4OsYzGn6; __Secure-3PAPISID=fb-NMZ_op7y8OPw3/AOVhSOSvN4OsYzGn6; __Secure-1PSIDTS=sidts-CjEBNiGH7njxCZ7lhry9TOlbIuyPoFfS9-5e3uAjJVgnuSVtRaFAzoSbIiFfQG2I-8DpEAA; __Secure-3PSIDTS=sidts-CjEBNiGH7njxCZ7lhry9TOlbIuyPoFfS9-5e3uAjJVgnuSVtRaFAzoSbIiFfQG2I-8DpEAA; OGPC=19039541-1:19022519-1",
-      "origin": "https://bard.google.com",
-      "referer": "https://bard.google.com/",
-      "sec-ch-ua": "Not;A=Brand;v=8, Chromium;v=117, Google Chrome;v=117",
-      "sec-ch-ua-arch": "x86",
-      "sec-ch-ua-bitness": "64",
-      "sec-ch-ua-full-version": "117.0.5938.92",
-      "sec-ch-ua-full-version-list": "Not;A=Brand;v=8.0.0.0, Chromium;v=117.0.5938.92, Google Chrome;v=117.0.5938.92",
-      "sec-ch-ua-mobile": "?0",
-      "sec-ch-ua-model": "",
-      "sec-ch-ua-platform": "Windows",
-      "sec-ch-ua-platform-version": "10.0.0",
-      "sec-ch-ua-wow64": "?0",
-      "sec-fetch-dest": "empty",
-      "sec-fetch-mode": "cors",
-      "sec-fetch-site": "same-origin",
-      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
-      "x-same-domain": "1"
+        "Cookie": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d=eyJpdiI6IjFodFl2QkJ4M3JMVDN5Nm5mZ2xTOVE9PSIsInZhbHVlIjoib1F1UVVaS3NKaDhTbGFVSHNRa1hKcnVNR3JVbUV6dksvb0FxSUxKRmlKUWNoRU1iS1hQRHgzUW5DUnA5L1JGMVR6T0VpOFZRTHRLM0NyRXRYdnY2RFNlcHc3T3VaazhZL2VEWnRoeTVDb3B5b3hmN2UxQWk4YzVQdHBUaTk2cmpiOUVRaHlvVkhsc1hrV0dmaW1RQ01MditLSUZiUkdjQ054c0FYN1Q5K3lZbk5KcUQxenVaYVNiRFNYU09vbGROd1ZVWFBSVTBxS2JMQUVyQ1ZPdjBERFpHeSt4MllxVUk2N0lYemtnQjZ0dz0iLCJtYWMiOiJhOTJmMGViMGJhZDIzNTkzOTgyNzA2MjEwZDEzYWMwM2FhZWFjOTFmYmM0MWIwZjg4NmFjYzU3OGI4Nzc5ZTNjIn0%3D; XSRF-TOKEN=eyJpdiI6Ik1lV1J2YmFESVdSRlh1Rlc2QzQyTkE9PSIsInZhbHVlIjoiRlo3bzd2K3VqSGdqWGVmeHhtTmFiUnJNM3RkVytIZWxEa0hwVXV6anZzKzVJZnkxME5LSzZMRjdXY1JzbVg1MXFlM3kyVlhsc3l4aUlFWGQzSkx1cEdYdTdrbHNCSWlCMGUyWko1TE9nK3B3N2dmV3F1MWJBcGZlWmdvMnpCeVYiLCJtYWMiOiIxMGIxOTdkYWMyODdlYzVhNTNjN2FkZjIxZWUxMzRhYjZlM2JhYzg4Y2E0OTZkOGZjZjk3YmM2OGNlY2I1MzQzIn0%3D; aicc_session=eyJpdiI6IlU2SU8wTDUva3BXZEVNMkxNQmpuTkE9PSIsInZhbHVlIjoianBxU3BFNHZ0b1M5cXVPKzlhbGkrQXgvaWNvK3V4L214RnhPa1hvNEQzcDhyUFhnT2dxZVBXL3kvM01zT2ZvWjBuQU9HQUFiZFBSeUdPWkhpdVZ4NVFtcGpuNW91NkVIUHJUV296dkZ4L25EL1lrN2pCL1hBWUl0SXAwR1RRUWwiLCJtYWMiOiJjNTc0MWY5ZTM0MjAxMzg4Mzg3N2Y5OTkyZGE0OGJhZjk2OTZjYTIyMThhMDkwYjUyM2JmMGJiMjI2OGYwZDAzIn0%3D",
+        "Host": "free.ai.cc",
+        "Origin": "https://free.ai.cc",
+        "Referer": "https://free.ai.cc/talk",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"
     }
-    url = "https://bard.google.com/_/BardChatUi/data/assistant.lamda.BardFrontendService/StreamGenerate"
-    params = {
-      "bl": "boq_assistant-bard-web-server_20231120.10_p0",
-      "f.sid": "8819303960662284844",
-      "hl": "zh-CN",
-      "_reqid": "2855700",
-      "rt": "c"
-    }
-    info_encode = parse.quote(q.replace('"', '').replace("'", '').encode('utf-8'))
-    data = f"f.req=%5Bnull%2C%22%5B%5B%5C%22{info_encode}%5C%22%2C0%2Cnull%2C%5B%5D%2Cnull%2Cnull%2C0%5D%2C%5B%5C%22zh-CN%5C%22%5D%2C%5B%5C%22%5C%22%2C%5C%22%5C%22%2C%5C%22%5C%22%2Cnull%2Cnull%2C%5B%5D%5D%2C%5C%22!bG-lbzfNAAYRMHX6MTBCV4U17GP-IHg7ADQBEArZ1FqalkAoFE3m30mmj8j63pe9v6tVZZD3X3198AwfzFG9irOwEQ70YwJKrv4F054lAgAAAE9SAAAABGgBB5kDUh_gPQ94uvclHzh2MNvCd0zN7XTCJPIyLcJirR3Llr8U8lgrrsBILlXzfiJYnR-W-Qw7qLHUjeu4ZlykHdv4prMPmiViSIPqPaBCYoL2dPZ1x7fqR-GqzVzwlcCqP0ae4Nc5986zb0WhG_R4irAERKui6J4bedS12B0CReSNkHq42lI1FRgDVSO-PTexky4Wc2cZIjPIK5hCVTLkSJY9OUj5V-C3m7aedOn2aJ0JFYs35fz8kyQxJarfVAy3zWcR1gv0dDyLRdreiOi2zQj4ymAwHvEz7b5SjTgG4BIjTRD0DxOkIhMsRCYqsOxpZS15i88neWqGEbetv9_onED-n6dUnEqI2OAk8S99fBr16XeYaYfXNmTND5s2kqAodVAjETu0vyid0dzJOP4PC5LI3gp2KF2-OnuGeDu46tokCiEsptoC3_veTdHys64UC_sASNfbt7Lb97NJqS7PGC24RxdQHEA0bQ9_ErgAmQCw8JxniZSkvHVFfEvku7cEyrktQXRzFcKHi4DRLRde1KZSRPvKIUugt95p5Ap0riSrw-dUesk9EGI93SLCO7DWTKDJjyf1kScGYLf7iyR8KRAm1Ohzl3f55jQZUiyCxHub658w4op-4D9HTosI9Gd4_b5vHmNtADkNNtEj-Gmor9qg5AAa2TD9JQBdvU-qkRpGh37lZUlaBO0zWVoRSvcVhrcENmUvwc8tl_oLH8hkiSGzDth6tsAk-LR3jF797ZhdKrHyHte3yW1jVDMzo8seNk-IUqGLLh1wMp9FeIcYUBTtP42a63Y_2C_KUPiTYjxam_WC7FB3pCLIhdKL0be0ZFZ-IS9lXnJAOCcEQALbp7P6K9t9FMPWRZYHggRKuQv1Yw-RyOic8BHdc6x1uhCMabJ7jf3q0lBMqa0NJI3IyhkKhf7T1vpoQfHgcQNPajbj6e_gtzMqAuNc5v2QNXKhaqJGXViV4UFmhA3jb3uyh4I8xweiNohTcv1p13Pt0rWdrNKHhY3zAYYQBV7HV4MbgTuONb0AGQWzUHBZJPm-VA7hKrqZKM0s8zMMmpbqN0v_pG9fx-X4QaVaL0D93jL0YHLhiganAA0WZBH-JLFT0ijIBEMtP-mGns2uak4Mihw-dbYE8Qk%5C%22%2C%5C%228db2d22830defc9b02f883791dfa6e21%5C%22%2Cnull%2C%5B0%5D%2C0%2C%5B%5D%2C%5B%5D%2C1%2C0%5D%22%5D&at=AOTFbH776BB0hpVI7_v4lS0a_s8t%3A1701070071041"
-    code = 0
-    while True:
-        if code == 3:
-            return '回答失败！'
-        try:
-            response = requests.post(url=url, params=params, headers=headers, data=data)
-            info = response.text.replace('\\', '')
-            infos = re.findall('",\["(.*?)"],\[]', info)
-            for cont in infos:
-                return cont
-        except Exception as e:
-            print(e)
-            code += 1
+    data = {"talk_id": "324230", "content": f"{q}", "_token": "JgzwSsP824ryymHZP7AfUP20sDa9DfNIwGh1smkx"}
+    url = 'https://free.ai.cc/send_talk'
+    response = requests.post(url=url, headers=headers, data=data)
+    return response.text
+
+
+# def get_ai(q):
+#     """
+#     调用google的bard接口
+#     :return:
+#     """
+#     headers = {
+#       "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+#       "cookie": "SEARCH_SAMESITE=CgQIq5kB; _ga=GA1.1.151380725.1698832645; SID=cwgXzn2Ias6KRxXcNxX5l_EwD4yZ6WFhTFfPDNmj0Wsb2SxjgKPRQB-CsGtoZ3Q887_52Q.; __Secure-1PSID=cwgXzn2Ias6KRxXcNxX5l_EwD4yZ6WFhTFfPDNmj0Wsb2Sxjf4K80kbG9bVcwOWh2KfgdQ.; __Secure-3PSID=cwgXzn2Ias6KRxXcNxX5l_EwD4yZ6WFhTFfPDNmj0Wsb2Sxj1GPDfk4fqU2kqVCSbUxiYQ.; HSID=ADCNhs_2cEzIgJmCd; SSID=AhFtj8rxdcI9KQhuP; APISID=PdAgNkYsQ14N46ms/AXYJCz54Jyj7bKmoj; SAPISID=fb-NMZ_op7y8OPw3/AOVhSOSvN4OsYzGn6; __Secure-1PAPISID=fb-NMZ_op7y8OPw3/AOVhSOSvN4OsYzGn6; __Secure-3PAPISID=fb-NMZ_op7y8OPw3/AOVhSOSvN4OsYzGn6; __Secure-1PSIDTS=sidts-CjEBNiGH7njxCZ7lhry9TOlbIuyPoFfS9-5e3uAjJVgnuSVtRaFAzoSbIiFfQG2I-8DpEAA; __Secure-3PSIDTS=sidts-CjEBNiGH7njxCZ7lhry9TOlbIuyPoFfS9-5e3uAjJVgnuSVtRaFAzoSbIiFfQG2I-8DpEAA; OGPC=19039541-1:19022519-1",
+#       "origin": "https://bard.google.com",
+#       "referer": "https://bard.google.com/",
+#       "sec-ch-ua": "Not;A=Brand;v=8, Chromium;v=117, Google Chrome;v=117",
+#       "sec-ch-ua-arch": "x86",
+#       "sec-ch-ua-bitness": "64",
+#       "sec-ch-ua-full-version": "117.0.5938.92",
+#       "sec-ch-ua-full-version-list": "Not;A=Brand;v=8.0.0.0, Chromium;v=117.0.5938.92, Google Chrome;v=117.0.5938.92",
+#       "sec-ch-ua-mobile": "?0",
+#       "sec-ch-ua-model": "",
+#       "sec-ch-ua-platform": "Windows",
+#       "sec-ch-ua-platform-version": "10.0.0",
+#       "sec-ch-ua-wow64": "?0",
+#       "sec-fetch-dest": "empty",
+#       "sec-fetch-mode": "cors",
+#       "sec-fetch-site": "same-origin",
+#       "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+#       "x-same-domain": "1"
+#     }
+#     url = "https://bard.google.com/_/BardChatUi/data/assistant.lamda.BardFrontendService/StreamGenerate"
+#     params = {
+#       "bl": "boq_assistant-bard-web-server_20231120.10_p0",
+#       "f.sid": "8819303960662284844",
+#       "hl": "zh-CN",
+#       "_reqid": "2855700",
+#       "rt": "c"
+#     }
+#     info_encode = parse.quote(q.replace('"', '').replace("'", '').encode('utf-8'))
+#     data = f"f.req=%5Bnull%2C%22%5B%5B%5C%22{info_encode}%5C%22%2C0%2Cnull%2C%5B%5D%2Cnull%2Cnull%2C0%5D%2C%5B%5C%22zh-CN%5C%22%5D%2C%5B%5C%22%5C%22%2C%5C%22%5C%22%2C%5C%22%5C%22%2Cnull%2Cnull%2C%5B%5D%5D%2C%5C%22!bG-lbzfNAAYRMHX6MTBCV4U17GP-IHg7ADQBEArZ1FqalkAoFE3m30mmj8j63pe9v6tVZZD3X3198AwfzFG9irOwEQ70YwJKrv4F054lAgAAAE9SAAAABGgBB5kDUh_gPQ94uvclHzh2MNvCd0zN7XTCJPIyLcJirR3Llr8U8lgrrsBILlXzfiJYnR-W-Qw7qLHUjeu4ZlykHdv4prMPmiViSIPqPaBCYoL2dPZ1x7fqR-GqzVzwlcCqP0ae4Nc5986zb0WhG_R4irAERKui6J4bedS12B0CReSNkHq42lI1FRgDVSO-PTexky4Wc2cZIjPIK5hCVTLkSJY9OUj5V-C3m7aedOn2aJ0JFYs35fz8kyQxJarfVAy3zWcR1gv0dDyLRdreiOi2zQj4ymAwHvEz7b5SjTgG4BIjTRD0DxOkIhMsRCYqsOxpZS15i88neWqGEbetv9_onED-n6dUnEqI2OAk8S99fBr16XeYaYfXNmTND5s2kqAodVAjETu0vyid0dzJOP4PC5LI3gp2KF2-OnuGeDu46tokCiEsptoC3_veTdHys64UC_sASNfbt7Lb97NJqS7PGC24RxdQHEA0bQ9_ErgAmQCw8JxniZSkvHVFfEvku7cEyrktQXRzFcKHi4DRLRde1KZSRPvKIUugt95p5Ap0riSrw-dUesk9EGI93SLCO7DWTKDJjyf1kScGYLf7iyR8KRAm1Ohzl3f55jQZUiyCxHub658w4op-4D9HTosI9Gd4_b5vHmNtADkNNtEj-Gmor9qg5AAa2TD9JQBdvU-qkRpGh37lZUlaBO0zWVoRSvcVhrcENmUvwc8tl_oLH8hkiSGzDth6tsAk-LR3jF797ZhdKrHyHte3yW1jVDMzo8seNk-IUqGLLh1wMp9FeIcYUBTtP42a63Y_2C_KUPiTYjxam_WC7FB3pCLIhdKL0be0ZFZ-IS9lXnJAOCcEQALbp7P6K9t9FMPWRZYHggRKuQv1Yw-RyOic8BHdc6x1uhCMabJ7jf3q0lBMqa0NJI3IyhkKhf7T1vpoQfHgcQNPajbj6e_gtzMqAuNc5v2QNXKhaqJGXViV4UFmhA3jb3uyh4I8xweiNohTcv1p13Pt0rWdrNKHhY3zAYYQBV7HV4MbgTuONb0AGQWzUHBZJPm-VA7hKrqZKM0s8zMMmpbqN0v_pG9fx-X4QaVaL0D93jL0YHLhiganAA0WZBH-JLFT0ijIBEMtP-mGns2uak4Mihw-dbYE8Qk%5C%22%2C%5C%228db2d22830defc9b02f883791dfa6e21%5C%22%2Cnull%2C%5B0%5D%2C0%2C%5B%5D%2C%5B%5D%2C1%2C0%5D%22%5D&at=AOTFbH776BB0hpVI7_v4lS0a_s8t%3A1701070071041"
+#     code = 0
+#     while True:
+#         if code == 3:
+#             return '回答失败！'
+#         try:
+#             response = requests.post(url=url, params=params, headers=headers, data=data)
+#             info = response.text.replace('\\', '')
+#             infos = re.findall('",\["(.*?)"],\[]', info)
+#             for cont in infos:
+#                 return cont
+#         except Exception as e:
+#             print(e)
+#             code += 1
 
 
 class Worker(threading.Thread):
@@ -632,7 +650,7 @@ class Tool_Web:
             "实时货币",  # 15
             "ip代理获取",  # 16
             "GPT问答",  # 17
-            "古诗文查询", # 18
+            "古诗文查询",  # 18
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -722,10 +740,11 @@ class Tool_Web:
                             urls = param_url(input_message)
                             st.success('提取成功!')
                     st.code(urls)
-                except:
+                except Exception as e:
                     p_text = "param = {}"
                     text = f"url = {input_message} \n{p_text}"
                     st.code(text)
+                    print(e)
 
     def self_pdf_word(self):
         if self.function_type == self.selectbox_options[4]:
@@ -766,7 +785,7 @@ class Tool_Web:
             '''图片采集'''
             st.title(f'{self.selectbox_options[5]}')
             with st.sidebar:  # 需要在侧边栏内展示的内容
-                input_message = st.text_input(label='请输入:')
+                # input_message = st.text_input(label='请输入:')
                 button_code = st.button(label=':blue[采集]')
             if button_code:
                 try:
@@ -989,7 +1008,6 @@ class Tool_Web:
                     info = get_ai(prompt)
                 with st.chat_message("👋"):
                     st.write(f"{info}")
-
 
     def poems(self):
         if self.function_type == self.selectbox_options[18]:
