@@ -126,6 +126,26 @@ class Worker(threading.Thread):
             self.queue.task_done()
 
 
+def re_txt(txt):
+    """
+    过滤字符串的杂志
+    :param txt: 需要过滤的字符串
+    :return:
+    """
+    html_code = '''
+    <b>|</b>|<a>|</a>|<li>|</li>|<span|</span>|class=".*?"|href=".*?"|"https:.*?"|"http:.*?"|https:.*? |http:.*? 
+    "'''  # 需要过滤html标签信息在此进行添加
+    txt_code = '</b>|\[|]|!|@|#|\$|%|\^|&|\*|  |\(|\)|\+|\\\\|™|®|<|>'  # 需要过滤特殊符号在此添加
+    html_list = list(set(re.findall(html_code, txt)))
+    for html in html_list:
+        txt = txt.replace(html, ' ')
+        print(f'替换{html}--->完毕！')
+    txt = re.sub(txt_code, ' ', txt)
+    txt = txt.replace('  ', ' ')
+    print(txt)
+    return txt
+
+
 def get_kuaidaili():
     """
     https://www.kuaidaili.com/free/
@@ -651,6 +671,8 @@ class Tool_Web:
             "ip代理获取",  # 16
             "GPT问答",  # 17
             "古诗文查询",  # 18
+            "文章过滤杂志",  # 19
+            "帮忙做决定",  # 20
         )  # 侧边栏参数
 
     def streamlit_selectbox(self):
@@ -682,8 +704,7 @@ class Tool_Web:
                 else:
                     with st.sidebar:
                         st.error('格式化失败')
-                    st.json({
-                                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
+                    st.json({"User-Agent": "Mozil   la/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
 
     def article_info(self):
         if self.function_type == self.selectbox_options[9]:
@@ -1030,6 +1051,32 @@ class Tool_Web:
                 with st.sidebar:
                     st.success('查询完毕')
 
+    def self_re_txt(self):
+        if self.function_type == self.selectbox_options[19]:
+            '''文章过滤杂志'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                st.success('过滤:<b>|</b>|<a>|</a>|<li>|</li>|<span|</span>|class=".*?"|href=".*?"|"https:.*?"|"http:.*?"|https:.*? |http:.*? |</b>|\[|]|!|@|#|\$|%|\^|&|\*|  |\(|\)|\+|\\\\|™|®|<|>')
+                texts = st.text_input(label='请输入需要过滤的内容：')
+                button_code = st.button(label=':blue[过滤]')
+            if button_code:
+                re_info = re_txt(texts)
+                st.write(re_info)
+
+    def self_decision(self):
+        if self.function_type == self.selectbox_options[20]:
+            '''帮忙做决定'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                texts = st.text_input(label='请输入要去做的事情：')
+                button_code = st.button(label=':blue[开始]')
+            if button_code:
+                code = 0
+                for i in range(10):
+                    code = random.randint(0, 1)
+                if code == 1:
+                    st.success('去做这件事吧！')
+                else:
+                    st.success('我告诉你尽量别这样做！')
+
 
     def streamlit_function(self):
         """
@@ -1056,6 +1103,8 @@ class Tool_Web:
         self.provide_ip()  # ip代理获取
         self.gpt()  # gpt问答
         self.poems()  # 古诗文查询
+        self.self_re_txt()  # 文章过滤杂志
+        self.self_decision()  # 帮忙做决定
 
 
 if __name__ == '__main__':
