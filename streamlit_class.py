@@ -36,6 +36,7 @@ def job_info(keys, positionId):
         times = info['year'] + info['month']
         price = info['monthAveSalary']
         price_list.append(int(price))
+        st.write(f'日期:{times}---薪资:{price}')
         infos = {times: price}
         info_dict.update(infos)
     max_pricr = max(price_list)
