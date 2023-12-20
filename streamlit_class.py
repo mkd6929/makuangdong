@@ -78,15 +78,27 @@ def get_ai(q):
     :return:
     """
     headers = {
-        "Cookie": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d=eyJpdiI6IjFodFl2QkJ4M3JMVDN5Nm5mZ2xTOVE9PSIsInZhbHVlIjoib1F1UVVaS3NKaDhTbGFVSHNRa1hKcnVNR3JVbUV6dksvb0FxSUxKRmlKUWNoRU1iS1hQRHgzUW5DUnA5L1JGMVR6T0VpOFZRTHRLM0NyRXRYdnY2RFNlcHc3T3VaazhZL2VEWnRoeTVDb3B5b3hmN2UxQWk4YzVQdHBUaTk2cmpiOUVRaHlvVkhsc1hrV0dmaW1RQ01MditLSUZiUkdjQ054c0FYN1Q5K3lZbk5KcUQxenVaYVNiRFNYU09vbGROd1ZVWFBSVTBxS2JMQUVyQ1ZPdjBERFpHeSt4MllxVUk2N0lYemtnQjZ0dz0iLCJtYWMiOiJhOTJmMGViMGJhZDIzNTkzOTgyNzA2MjEwZDEzYWMwM2FhZWFjOTFmYmM0MWIwZjg4NmFjYzU3OGI4Nzc5ZTNjIn0%3D; XSRF-TOKEN=eyJpdiI6Ik1lV1J2YmFESVdSRlh1Rlc2QzQyTkE9PSIsInZhbHVlIjoiRlo3bzd2K3VqSGdqWGVmeHhtTmFiUnJNM3RkVytIZWxEa0hwVXV6anZzKzVJZnkxME5LSzZMRjdXY1JzbVg1MXFlM3kyVlhsc3l4aUlFWGQzSkx1cEdYdTdrbHNCSWlCMGUyWko1TE9nK3B3N2dmV3F1MWJBcGZlWmdvMnpCeVYiLCJtYWMiOiIxMGIxOTdkYWMyODdlYzVhNTNjN2FkZjIxZWUxMzRhYjZlM2JhYzg4Y2E0OTZkOGZjZjk3YmM2OGNlY2I1MzQzIn0%3D; aicc_session=eyJpdiI6IlU2SU8wTDUva3BXZEVNMkxNQmpuTkE9PSIsInZhbHVlIjoianBxU3BFNHZ0b1M5cXVPKzlhbGkrQXgvaWNvK3V4L214RnhPa1hvNEQzcDhyUFhnT2dxZVBXL3kvM01zT2ZvWjBuQU9HQUFiZFBSeUdPWkhpdVZ4NVFtcGpuNW91NkVIUHJUV296dkZ4L25EL1lrN2pCL1hBWUl0SXAwR1RRUWwiLCJtYWMiOiJjNTc0MWY5ZTM0MjAxMzg4Mzg3N2Y5OTkyZGE0OGJhZjk2OTZjYTIyMThhMDkwYjUyM2JmMGJiMjI2OGYwZDAzIn0%3D",
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+        "Connection": "keep-alive",
+        "Content-Length": "97",
+        "Content-Type": "application/json",
+        "Cookie": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d=eyJpdiI6IldxM0FnV0FPam5yK0hYR1VWNkR1UGc9PSIsInZhbHVlIjoiRDdvSWtVRG4vNllhTWh6R2ZHdEZNZFZ2cktzN01jRGVwSmVkWGpSUEEyOGdyeFEwekVCN3RlbDNvSHIvdU52WlFOcnNQK0lySS9wd1ZObVJzZDllRzIxY2xNUkh0dENHSUlwWllSNi84UUdaUkxjTnZ5Q2F2SUxUYThCMCt1ejIwRTdZN1pTL1d2UWM0dGZ2dnFhUUxlc1AyUmRVVU85MlVoUzgxdnNlemRZdG45T0hRa2VINXkrMFdyeWdLSlNXK0FtemVDS0RlOGNHeWJ1MFBXdUlRMHM4YTgvRGZRN3pnVkJveFpEL2UzUT0iLCJtYWMiOiJmMzFlN2YwMzY4ODZlY2VmNTI4Yjc4NzFlYTVhYTJkMjI5YWJhOTJjZjY5YWY4OGVhMGNhZTQ0Mzc0NzE0ZTA3In0%3D; XSRF-TOKEN=eyJpdiI6InArNEhXL2luNHlibHE4aVBvTFhuUFE9PSIsInZhbHVlIjoiV2tEKzRLZFY1ODJSNE1DeTYvMkZSMGlTV0J0MlI5ZE9qUzl2OW9ZeHloTFhpQ29RaU1kRk5zbVJTVmJGTGNzdDZ1dTJYcjByQ1pjSVFXcndTQWN5MXVaQ2ZUYTNaRHNHaUJYMHgvdlh0ek9rb0ZRYVFEMnIya3Z4SHgzTjVXUTkiLCJtYWMiOiI3Y2FjZjI3OTc5MTU0NTYwMzAxZWU4OTU2Y2Y4ZDcyOTQzZWNkZTg2ZjA0MWIyY2MzOGZhOGNjM2M2NjEyM2QzIn0%3D; aicc_session=eyJpdiI6ImMwMGVQRmtPMWIzZ2ZUL1Noa0c5V2c9PSIsInZhbHVlIjoiMDd1Yzd4UG14SjE0U0x5UTNXTGwxdm5IVkVnNjRuM0Qwc2kvQ2RuMENjL3RmYzJ4anNZaHlJYjZnZ1U2cmY2bEFvUzI5R2t0am5UMGdKa3FZOUJDbkdvVEpwcTQveEpKL25pcGpQTjdVbmdQS3QzKzRBRlBBWWlabS96UFhpcTUiLCJtYWMiOiJkYjM0YTRmMmNhNTk4NTkyZmIzMWIyODliOTAzODk0MDRmZWEwN2QzZjNiZDQ2MzkxYzM5MGE0NDRkZjQ2ZjlhIn0%3D",
         "Host": "free.ai.cc",
         "Origin": "https://free.ai.cc",
         "Referer": "https://free.ai.cc/talk",
+        "sec-ch-ua": "\"Microsoft Edge\";v=\"117\", \"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"117\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"
     }
-    data = {"talk_id": "324230", "content": f"{q}", "_token": "JgzwSsP824ryymHZP7AfUP20sDa9DfNIwGh1smkx"}
     url = 'https://free.ai.cc/send_talk'
-    response = requests.post(url=url, headers=headers, data=data)
+    data = {"talk_id": "335564", "content": f"{q}", "_token": "POMRcUVeOnOGzoczHYIa6fJpJS56y2QYEYgczhMc"}
+    response = requests.post(url=url, headers=headers, json=data)
     return response.text
 
 
