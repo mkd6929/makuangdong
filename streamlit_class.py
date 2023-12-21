@@ -719,6 +719,7 @@ class Tool_Web:
             "薪资查询",  # 21
             "每日热榜",  # 22
             "翻译",  # 23
+            "qq号等信息查询",  # 24
         )  # 侧边栏参数
 
 
@@ -1388,6 +1389,78 @@ class Tool_Web:
                     st.info(translate_info)
 
 
+    def qq_info(self):
+        headers = {
+            "Referer": "http://xhnzz.xyz/",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"
+        }
+        if self.function_type == self.selectbox_options[24]:
+            '''qq号等信息查询'''
+            with st.sidebar:
+                genre = st.radio(
+                    "请选择需要查询的信息",
+                    ["qq号查询", "手机号查询", "微博uid查询"])
+
+            if genre == 'qq号查询':
+                txt = st.text_input(label='请输入qq号')
+                button_code = st.button(label=':blue[查询]')
+                if button_code:
+                    url = f'https://zy.xywlapi.cc/qqcx2023?qq={txt}'
+                    response = requests.get(url=url, headers=headers).json()
+                    status = response['status']
+                    if status == 200:
+                        st.text(
+                            f"qq:{txt}\n"
+                            f"电话:{response['phone']}\n"
+                            f"归属地:{response['phonediqu']}\n"
+                            f"lol名称:{response['lol']}\n"
+                            f"微博id:{response['wb']}\n"
+                            f"qq密码:{response['qqlm']}"
+                        )
+                        if response['wb'] != '没有找到':
+                            st.text(f"微博链接:https://www.weibo.com/u/{response['wb']}\n")
+                    else:
+                        st.text('查询失败')
+
+            if genre == '手机号查询':
+                txt = st.text_input(label='请输入手机号')
+                button_code = st.button(label=':blue[查询]')
+                if button_code:
+                    url = f'https://zy.xywlapi.cc/qqxc2023?phone={txt}'
+                    response = requests.get(url=url, headers=headers).json()
+                    status = response['status']
+                    if status == 200:
+                        st.text(
+                            f"电话:{txt}\n"
+                            f"qq:{response['qq']}\n"
+                            f"归属地:{response['phonediqu']}\n"
+                            f"lol名称:{response['lol']}\n"
+                            f"微博id:{response['wb']}\n"
+                            f"qq密码:{response['qqlm']}"
+                        )
+                        if response['wb'] != '没有找到':
+                            st.text(f"微博链接:https://www.weibo.com/u/{response['wb']}\n")
+                    else:
+                        st.text('查询失败')
+            if genre == '微博uid查询':
+                txt = st.text_input(label='请输入微博uid')
+                button_code = st.button(label=':blue[查询]')
+                if button_code:
+                    url = f'https://api.xywlapi.cc/wbapi?id={txt}'
+                    response = requests.get(url=url, headers=headers).json()
+                    status = response['status']
+                    if status == 200:
+                        st.text(
+                            f"uid:{txt}\n"
+                            f"电话:{response['phone']}\n"
+                            f"归属地:{response['phonediqu']}\n"
+                        )
+                        if response['wb'] != '没有找到':
+                            st.text(f"微博链接:https://www.weibo.com/u/{response['wb']}\n")
+                    else:
+                        st.text('查询失败')
+
+
     def streamlit_function(self):
         """
         侧边栏执行功能
@@ -1418,6 +1491,7 @@ class Tool_Web:
         self.get_prices()  # 薪资查询
         self.day_hot_img()  # 每日热榜
         self.streamlit_translate()  # 翻译
+        self.qq_info()  # qq信息查询
 
 
 if __name__ == '__main__':
