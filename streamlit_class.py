@@ -635,11 +635,64 @@ def get_mv_url(condition, info):
     return title, mv_img, mv_list
 
 
+def day_content():
+    """
+    每日随意一言
+    :return:
+    """
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"
+    }
+    url = 'https://v1.hitokoto.cn/'
+    response = requests.get(url=url, headers=headers).json()["hitokoto"]
+    with st.sidebar:
+        st.header('每日一言')
+        st.write(response)
+
+
+def translate(txt, language):
+    """
+    翻译
+    :return:
+    """
+    headers = {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+        "Connection": "keep-alive",
+        "Content-Length": "95",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Cookie": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d=eyJpdiI6IldxM0FnV0FPam5yK0hYR1VWNkR1UGc9PSIsInZhbHVlIjoiRDdvSWtVRG4vNllhTWh6R2ZHdEZNZFZ2cktzN01jRGVwSmVkWGpSUEEyOGdyeFEwekVCN3RlbDNvSHIvdU52WlFOcnNQK0lySS9wd1ZObVJzZDllRzIxY2xNUkh0dENHSUlwWllSNi84UUdaUkxjTnZ5Q2F2SUxUYThCMCt1ejIwRTdZN1pTL1d2UWM0dGZ2dnFhUUxlc1AyUmRVVU85MlVoUzgxdnNlemRZdG45T0hRa2VINXkrMFdyeWdLSlNXK0FtemVDS0RlOGNHeWJ1MFBXdUlRMHM4YTgvRGZRN3pnVkJveFpEL2UzUT0iLCJtYWMiOiJmMzFlN2YwMzY4ODZlY2VmNTI4Yjc4NzFlYTVhYTJkMjI5YWJhOTJjZjY5YWY4OGVhMGNhZTQ0Mzc0NzE0ZTA3In0%3D; XSRF-TOKEN=eyJpdiI6IlRudkpGbU1HUmFOaE1KZ2xSSGtLa2c9PSIsInZhbHVlIjoiWUdLa3Q3b3BnT2FHTTlqN3RFajFIcDFDR3V2QWg1YmZ2Syt3QWwvdEt4L05CM3praDFyeWE4SklxRUhmendWZWFpb1hLS0xKcStpOE4vb0RHZTlCSWhuazVGSkRlSnVMcEtxUXNKOElnTU5TWFMzR3FBZkdzVGVvTExva3BnZFUiLCJtYWMiOiIzODVhNGNkYjdhN2RlZGNlNTMxMjRjZjE0NTZmMzIzODZmODFmMmZmZGEzNDcyMzU0ZmU3Mjc0NWMwM2E0Y2ExIn0%3D; aicc_session=eyJpdiI6InZqbWpOZm9UdFA1cmMvNTg5bFk4QkE9PSIsInZhbHVlIjoic2FiREVPMURUVVllNnZnS1NkYmJla3RaSkFHSkVVK1FxSzU3TUN5VXRqVmdjZlhuTnA0TWNPNlVGMW04YVc0WlpxNkMzRUhMek1oNVR6NlpmektGSERZOUh1OEVwelg3clREYTFpUGxDOXcyVGFQd3ArZnFkaU5hNkh5aHZYbUQiLCJtYWMiOiJmNGZjN2E1ZDdhYTZhZWE5MDg1ZmY5OGFiM2NjMDA3ZmY5YzRiMmJjZWVlZDA1ODliMDcwM2U5NTI2ZjE5ZWY0In0%3D",
+        "Host": "free.ai.cc",
+        "Origin": "https://free.ai.cc",
+        "Referer": "https://free.ai.cc/translate",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43",
+        "X-CSRF-TOKEN": "POMRcUVeOnOGzoczHYIa6fJpJS56y2QYEYgczhMc",
+        "X-Requested-With": "XMLHttpRequest"
+    }
+    url = 'https://free.ai.cc/trans'
+    data = {
+        "text": f"{txt}",
+        "tl": f"{language}",
+        "_token": "POMRcUVeOnOGzoczHYIa6fJpJS56y2QYEYgczhMc"
+    }
+    response = requests.post(url=url, headers=headers, data=data).json()
+    status = response['status']
+    if status == 200:
+        return response['data']['result']
+    else:
+        return None
+
+
 class Tool_Web:
     """
     工具页面
     """
     def __init__(self):
+
         self.function_type = None  # 功能类别
         self.selectbox_options = (
             "Headers格式化",  # 0
@@ -664,7 +717,10 @@ class Tool_Web:
             "文章过滤杂志",  # 19
             "帮忙做决定",  # 20
             "薪资查询",  # 21
+            "每日热榜",  # 22
+            "翻译",  # 23
         )  # 侧边栏参数
+
 
     def streamlit_selectbox(self):
         """
@@ -1294,6 +1350,44 @@ class Tool_Web:
                     st.success(info)
 
 
+    def day_hot_img(self):
+        if self.function_type == self.selectbox_options[22]:
+            '''每日热榜'''
+            headers = {
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"
+            }
+            url = 'https://api.pearktrue.cn/api/60s/image/hot/?type=baidu'
+            response = requests.get(url=url, headers=headers).content
+            st.image(response)
+
+
+    def streamlit_translate(self):
+        if self.function_type == self.selectbox_options[23]:
+            '''实时翻译'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                genre = st.radio(
+                    "请选择需要翻译的语言",
+                    ["中文", "英文"])
+            if genre == '中文':
+                st.success("中文转英文")
+                language = 'en'
+                txt = st.text_input(label='请输入待翻译信息')
+                button_code = st.button(label=':blue[翻译]')
+                if button_code:
+                    translate_info = translate(txt, language)
+                    st.write('翻译结果：')
+                    st.info(translate_info)
+            if genre == '英文':
+                language = 'zh'
+                st.success('英文转中文')
+                txt = st.text_input(label='请输入待翻译信息')
+                button_code = st.button(label=':blue[翻译]')
+                if button_code:
+                    translate_info = translate(txt, language)
+                    st.write('翻译结果：')
+                    st.info(translate_info)
+
+
     def streamlit_function(self):
         """
         侧边栏执行功能
@@ -1322,6 +1416,8 @@ class Tool_Web:
         self.self_re_txt()  # 文章过滤杂志
         self.self_decision()  # 帮忙做决定
         self.get_prices()  # 薪资查询
+        self.day_hot_img()  # 每日热榜
+        self.streamlit_translate()  # 翻译
 
 
 if __name__ == '__main__':
