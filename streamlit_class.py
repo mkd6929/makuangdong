@@ -1560,7 +1560,7 @@ class Tool_Web:
                             st.caption(f"商品链接：{goods_info['链接']}")
                             st.metric(label="价格浮动", value=str(int(goods_info['当前价格'])), delta=goods_info['涨幅'])
                             st.caption(f"当前价格：:red[{goods_info['当前价格']}]元")
-                            st.caption(f"最低价格：:red[{goods_info['最低价格']}]元")
+                            st.caption(f"历史最低价格：:red[{goods_info['最低价格']}]元")
 
                         with col2:
                             st.caption(f":blue[历史价格表]:")
