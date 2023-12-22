@@ -16,7 +16,6 @@ import re
 import pandas as pd
 
 
-
 def _md5(parse_txt):
     parse_md5 = hashlib.md5()  # 创建md5对象
     parse_md5.update(parse_txt.encode('utf-8'))
@@ -1557,10 +1556,11 @@ class Tool_Web:
                         col1, col2 = st.columns(2)
                         with col1:
                             st.image(goods_info['图片'])
-                            st.caption(f"商品链接：{goods_info['链接']}")
-                            st.metric(label="价格浮动", value=str(int(goods_info['当前价格'])), delta=goods_info['涨幅'])
+                            # st.caption(f"商品链接：{goods_info['链接']}")
+                            st.metric(label="对比历史最低价", value=str(int(goods_info['当前价格'])), delta=goods_info['涨幅'])
                             st.caption(f"当前价格：:red[{goods_info['当前价格']}]元")
                             st.caption(f"历史最低价格：:red[{goods_info['最低价格']}]元")
+                            st.caption(f"三月内最高价格：:red[{max(goods_info['历史时间段价格'])}]元")
 
                         with col2:
                             st.caption(f":blue[历史价格表]:")
@@ -1582,7 +1582,7 @@ class Tool_Web:
                                 },
                             )
                     else:
-                        # 'https://tool.manmanbuy.com/HistoryLowest.aspx?url=https%3a%2f%2fitem.jd.com%2f10080177096677.html'
+                        'https://tool.manmanbuy.com/HistoryLowest.aspx?url=https%3a%2f%2fitem.jd.com%2f10080177096677.html'
                         st.error('查询失败,请检查是否出现滑块或者是cookie过期')
 
 
