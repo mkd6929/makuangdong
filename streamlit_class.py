@@ -1532,8 +1532,6 @@ class Tool_Web:
                             f"电话:{response['phone']}\n"
                             f"归属地:{response['phonediqu']}\n"
                         )
-                        if response['wb'] != '没有找到':
-                            st.text(f"微博链接:https://www.weibo.com/u/{response['wb']}\n")
                     else:
                         st.text('查询失败')
 
