@@ -1,6 +1,4 @@
-import requests
 import json
-import re
 import random
 import streamlit as st
 from newspaper import Article
@@ -8,10 +6,89 @@ from urllib import parse
 import urllib
 from bs4 import BeautifulSoup
 import pdfplumber
-import time
 import threading
 import queue
 from lxml import etree
+import requests
+import hashlib
+import time
+import re
+import pandas as pd
+
+
+
+def _md5(parse_txt):
+    parse_md5 = hashlib.md5()  # 创建md5对象
+    parse_md5.update(parse_txt.encode('utf-8'))
+    return parse_md5.hexdigest()
+
+
+def create_auth():
+    """
+    获取Authorization
+    :return:
+    """
+    response = requests.get('http://tool.manmanbuy.com/HistoryLowest.aspx')
+    if response.status_code == 200:
+        searchRet = re.search(r'id="ticket".+value="(?P<value>.+)"', response.text)
+        if not searchRet:
+            return None
+        ticket = searchRet.group('value')
+        return 'BasicAuth ' + ticket[-4:] + ticket[:-4]
+    return None
+
+
+def parse_goods_price(urls):
+    """
+    获取token
+    :param urls:
+    :return:
+    """
+    headers = {
+        "Authorization":  create_auth(),
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Cookie": "60014_mmbuser=W1cNAAAFDjoAWQUCAFADVQJaW14CA1IFCgJVCVZaVQVXB1MJUwUBBw%3d%3d; _gid=GA1.2.1810844068.1703208861; ASP.NET_SessionId=p2hkrqgxdiaonxn1edsfcdh0; Hm_lvt_01a310dc95b71311522403c3237671ae=1702361308,1703208860,1703216505; Hm_lvt_85f48cee3e51cd48eaba80781b243db3=1702361303,1703208860,1703216505; acw_tc=784e2cb017032236709296209e7ac5821e0c12d981adad71268d3f5c26dc71; _gat_gtag_UA_145348783_1=1; Hm_lpvt_85f48cee3e51cd48eaba80781b243db3=1703223958; _ga=GA1.2.305938721.1702361277; _ga_1Y4573NPRY=GS1.1.1703223710.4.1.1703223968.0.0.0; Hm_lpvt_01a310dc95b71311522403c3237671ae=1703223968",        "Host": "tool.manmanbuy.com",
+        "Origin": "http://tool.manmanbuy.com",
+        "Proxy-Connection": "keep-alive",
+        "Referer": "http://tool.manmanbuy.com/HistoryLowest.aspx?url=https%3A%2F%2Fitem.jd.com%2F10080177096677.html",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43",
+        "X-Requested-With": "XMLHttpRequest"
+    }
+    time_num = int(time.time() * 1000)
+    re_urls = urls.replace(':', '%3A').replace('/', '%2F')
+    tokens = f'C5C3F201A8E8FC634D37A766A0299218KEY{re_urls}METHODGETHISTORYTRENDT{time_num}C5C3F201A8E8FC634D37A766A0299218'.upper()
+    data = {
+        'method': 'getHistoryTrend',
+        'key': f'{urls}',
+        't': time_num,
+        'token': _md5(tokens).upper()
+    }
+    response = requests.post(url='http://tool.manmanbuy.com/api.ashx', headers=headers, data=data)
+    if len(response.text) > 100:
+        response = response.json()['data']
+        time_list = []
+        price_list = []
+        for t in eval(response['datePrice']):
+            strf_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(t[0]/1000)))
+            time_list.append(strf_time)
+            price_list.append(t[1])
+
+        info_dict = {
+            '链接': response['spUrl'],
+            '图片': response['spPic'],
+            '商品名称': response['spName'],
+            '当前价格': response['currentPrice'],
+            '涨幅': response['changPriceRemark'],
+            '最低价格': response['lowerPrice'],
+            '最低价格日期': response['lowerDate'],
+            '历史时间段': time_list,
+            '历史时间段价格': price_list
+        }
+        # print(info_dict)
+        return info_dict
+    else:
+        print('被反扒或者cookie过期')
+        return None
 
 
 def job_info(keys, positionId):
@@ -720,6 +797,7 @@ class Tool_Web:
             "每日热榜",  # 22
             "翻译",  # 23
             "qq号等信息查询",  # 24
+            "京东商品历史价格查询",  # 25
         )  # 侧边栏参数
 
 
@@ -1461,6 +1539,53 @@ class Tool_Web:
                         st.text('查询失败')
 
 
+    def jingdong_price(self):
+        if self.function_type == self.selectbox_options[25]:
+            '''京东价格查询'''
+            with st.sidebar:  # 需要在侧边栏内展示的内容
+                st.write('例:https://item.jd.com/10080177096677.html')
+                txt = st.text_input(label='请输入需要查询的商品链接')
+                button_code = st.button(label=':blue[查询]')
+            if 'https://item.jd.com/' not in txt:
+                st.error('链接错误,请检查输入链接是否正确')
+            else:
+                if button_code:
+                    with st.spinner('正在查询...'):
+                        goods_info = parse_goods_price(txt)
+                    if goods_info:
+                        st.info(f"{goods_info['商品名称']}")
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.image(goods_info['图片'])
+                            st.caption(f"商品链接：{goods_info['链接']}")
+                            st.metric(label="价格浮动", value=str(int(goods_info['当前价格'])), delta=goods_info['涨幅'])
+                            st.caption(f"当前价格：:red[{goods_info['当前价格']}]元")
+                            st.caption(f"最低价格：:red[{goods_info['最低价格']}]元")
+
+                        with col2:
+                            st.caption(f":blue[历史价格表]:")
+                            data_df = pd.DataFrame(
+                                {
+                                    '日期': goods_info['历史时间段'],
+                                    '价格': goods_info['历史时间段价格'],
+                                },
+                            )
+                            st.data_editor(
+                                data_df,
+                                column_config={
+                                    "widgets": st.column_config.Column(
+                                        "Streamlit Widgets",
+                                        help="Streamlit **widget** commands 🎈",
+                                        width="small",
+                                        required=True,
+                                    )
+                                },
+                            )
+                    else:
+                        'https://tool.manmanbuy.com/HistoryLowest.aspx?url=https%3a%2f%2fitem.jd.com%2f10080177096677.html'
+                        st.error('查询失败,请检查是否出现滑块或者是cookie过期')
+
+
     def streamlit_function(self):
         """
         侧边栏执行功能
@@ -1492,6 +1617,7 @@ class Tool_Web:
         self.day_hot_img()  # 每日热榜
         self.streamlit_translate()  # 翻译
         self.qq_info()  # qq信息查询
+        self.jingdong_price()  # 京东历史价格查询
 
 
 if __name__ == '__main__':
