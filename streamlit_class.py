@@ -1546,10 +1546,10 @@ class Tool_Web:
                 st.write('例:https://item.jd.com/10080177096677.html')
                 txt = st.text_input(label='请输入需要查询的商品链接')
                 button_code = st.button(label=':blue[查询]')
-            if 'https://item.jd.com/' not in txt:
-                st.error('链接错误,请检查输入链接是否正确')
-            else:
-                if button_code:
+            if button_code:
+                if 'https://item.jd.com/' not in txt:
+                    st.error('链接错误,请检查输入链接是否正确')
+                else:
                     with st.spinner('正在查询...'):
                         goods_info = parse_goods_price(txt)
                     if goods_info:
