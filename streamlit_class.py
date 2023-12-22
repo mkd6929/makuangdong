@@ -1582,7 +1582,7 @@ class Tool_Web:
                                 },
                             )
                     else:
-                        'https://tool.manmanbuy.com/HistoryLowest.aspx?url=https%3a%2f%2fitem.jd.com%2f10080177096677.html'
+                        # 'https://tool.manmanbuy.com/HistoryLowest.aspx?url=https%3a%2f%2fitem.jd.com%2f10080177096677.html'
                         st.error('查询失败,请检查是否出现滑块或者是cookie过期')
 
 
