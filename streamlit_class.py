@@ -154,25 +154,27 @@ def get_ai(q):
     :return:
     """
     headers = {
-        "Host": "free.ai.cc",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
-        "Accept": "*/*",
-        "Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Referer": "https://free.ai.cc/talk",
-        "Content-Type": "application/json",
-        "Content-Length": "115",
-        "Origin": "https://free.ai.cc",
-        "Connection": "keep-alive",
-        "Cookie": "XSRF-TOKEN=eyJpdiI6Ik5mSzNUWHlSWnJUQ2dzZzFJSk55RXc9PSIsInZhbHVlIjoicnE0WDF4bUxTU3ppZ1kwd0svVE9oSE04WWJLNy9BOWVyVGJEMVNXT1llTk9wYUVsM29nc0ZpZS9QTG8xbGx3cGZZV3k0Vm9sNWU3UXlOaFllamtQcHdoampOb0hJMGtncUg3eVZqa3dTTDlLdTcrbWJiV1gxcGFGb29nR0prZXYiLCJtYWMiOiIzZDQ3MTcyMTNiNTk0ZWJjZTU3NjljODJjYmIyZmU0ODgxYmJhODVjODE5Njk0YzBiOGQwNDlkZTgwMDVmN2FkIn0%3D; aicc_session=eyJpdiI6Ijc2WXgxQ0QvL2wvREVaRXZJTVdUUFE9PSIsInZhbHVlIjoienQ5SnVuRkdvMUpTQTdLdmhPdThwVC80VVVtZFVCKzAwZFZVMk92R293djFSVXhYdkdsL2pmNDNLaUZlZURDVlo5S2lQMFRrZVFuR2c0ZDdmclNOa21JSEsxaUlWWDVHOEc2Vy9BUjZpaUg3SWJweXlHdFJEUFNVVTN6NzNIU3MiLCJtYWMiOiJjOTg1YWI1OTYzNDJlZDhjZDk4OTEwODI3YmQzZjA4MGQ4MDE4YmU2NWU0YzA2NmY2MTllMmFkNmRjMmUxYzYxIn0%3D",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin"
+        "accept": "*/*",
+        "accept-encoding": "gzip, deflate, br",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+        "content-length": "32",
+        "content-type": "application/json",
+        "cookie": "_ss_s_uid=d57d2591ea905acd3fe481036babe023; yonghu_token=75589ff7d7245bc9cdff7b74e24b0af3",
+        "origin": "https://ai.wlai.vip",
+        "referer": "https://ai.wlai.vip/aidraw/",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"
     }
-    url = 'https://free.ai.cc/send_talk'
-    data = {"talk_id": "355247", "content": f"{q}", "_token": "2D49Tu8dlHjqAKtmTf4WvrOFwqczWMboEosyu4yK"}
-    response = requests.post(url=url, headers=headers, json=data)
-    return response.text
+    url = 'https://ai.wlai.vip/web.php//chat/sendText'
+    data = {"group_id": 64078, "message": f'{q}'}
+    response = requests.post(url=url, headers=headers, data=json.dumps(data))
+    if response.text:
+        return response.text
+    else:
+        return '今日已达上限'
+
 
 
 class Worker(threading.Thread):
