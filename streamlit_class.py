@@ -738,24 +738,22 @@ def translate(txt, language):
         "Accept-Encoding": "gzip, deflate, br",
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
         "Connection": "keep-alive",
-        "Content-Length": "95",
+        "Content-Length": "7986",
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "Cookie": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d=eyJpdiI6IldxM0FnV0FPam5yK0hYR1VWNkR1UGc9PSIsInZhbHVlIjoiRDdvSWtVRG4vNllhTWh6R2ZHdEZNZFZ2cktzN01jRGVwSmVkWGpSUEEyOGdyeFEwekVCN3RlbDNvSHIvdU52WlFOcnNQK0lySS9wd1ZObVJzZDllRzIxY2xNUkh0dENHSUlwWllSNi84UUdaUkxjTnZ5Q2F2SUxUYThCMCt1ejIwRTdZN1pTL1d2UWM0dGZ2dnFhUUxlc1AyUmRVVU85MlVoUzgxdnNlemRZdG45T0hRa2VINXkrMFdyeWdLSlNXK0FtemVDS0RlOGNHeWJ1MFBXdUlRMHM4YTgvRGZRN3pnVkJveFpEL2UzUT0iLCJtYWMiOiJmMzFlN2YwMzY4ODZlY2VmNTI4Yjc4NzFlYTVhYTJkMjI5YWJhOTJjZjY5YWY4OGVhMGNhZTQ0Mzc0NzE0ZTA3In0%3D; XSRF-TOKEN=eyJpdiI6IlRudkpGbU1HUmFOaE1KZ2xSSGtLa2c9PSIsInZhbHVlIjoiWUdLa3Q3b3BnT2FHTTlqN3RFajFIcDFDR3V2QWg1YmZ2Syt3QWwvdEt4L05CM3praDFyeWE4SklxRUhmendWZWFpb1hLS0xKcStpOE4vb0RHZTlCSWhuazVGSkRlSnVMcEtxUXNKOElnTU5TWFMzR3FBZkdzVGVvTExva3BnZFUiLCJtYWMiOiIzODVhNGNkYjdhN2RlZGNlNTMxMjRjZjE0NTZmMzIzODZmODFmMmZmZGEzNDcyMzU0ZmU3Mjc0NWMwM2E0Y2ExIn0%3D; aicc_session=eyJpdiI6InZqbWpOZm9UdFA1cmMvNTg5bFk4QkE9PSIsInZhbHVlIjoic2FiREVPMURUVVllNnZnS1NkYmJla3RaSkFHSkVVK1FxSzU3TUN5VXRqVmdjZlhuTnA0TWNPNlVGMW04YVc0WlpxNkMzRUhMek1oNVR6NlpmektGSERZOUh1OEVwelg3clREYTFpUGxDOXcyVGFQd3ArZnFkaU5hNkh5aHZYbUQiLCJtYWMiOiJmNGZjN2E1ZDdhYTZhZWE5MDg1ZmY5OGFiM2NjMDA3ZmY5YzRiMmJjZWVlZDA1ODliMDcwM2U5NTI2ZjE5ZWY0In0%3D",
+        "Cookie": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d=eyJpdiI6ImtKMGRHQnQwdnZENHFKNklWbCtvUlE9PSIsInZhbHVlIjoiY1JwMW5nMFkrRFJzcFQxWUVUV0JkaWR5c3Q2bEh1UVY3UGx2ZGRSenNTSFRLQThzNHc1Vmx1Q1crbm90OXZPRzJFRnpFTkhCRWZMV3NSbmF5di95T0cxMmRuK0NmSmpJd1hYM3pJb3MvbjhGVGdTRzRXdW9FZm5TZG1mbzhrUjlkcDYxbXZKYXc1Z2oyYk9vTUFsYmhIZGprTFJNcXZ3UHJrMkxQV1JmSzc0ZWVPbWxXTUg2TTgyY1F6MXZIek5rejJwbXlmelB2c2dCV2VLZVhsUUxKcTQvcGRrTm1kYzF0RVZxL3pHTVhSND0iLCJtYWMiOiIzNDgzYjc1ZDViZDNjZWQ4NzhlMGFmMTU2YmUwYTY0ZTkzNzNkY2UzNjdjODNlMTU4YzBjNjg2ZmRkOTExODhiIn0%3D; XSRF-TOKEN=eyJpdiI6Ijc5alEvY3ZLckFPTGpsOWY1NkxQdFE9PSIsInZhbHVlIjoiTXdpQU9jcDBkd1g0c1FmYmkzdWY2SVo2UjFNZlUxMDFjV0l0WklPaVp1SEJVZTFHS2FHcE41NFpGMFZ4anhvYlpVanpRWjZndi9FYkJQNFA2S0NMbjNOdkcrVFRac3RSY0dvTWRCRW9wOTR5aFp2bG53WTJBTVdjWGNHWkowSGkiLCJtYWMiOiJiZjdhM2MyNTUyM2UyNzM4NmZkMGMyZjU4YjMyZDA2YjM3N2I5MDFlYjE3ZTljNmQwYWUyNTdkNDMxZjhkYWVjIn0%3D; aicc_session=eyJpdiI6InNJT0k2QkUvbkQyeEsvSk9OWEMyTlE9PSIsInZhbHVlIjoiVk5VUjREeWFXT3FuSUYwbC9HczBvSCsxSHBtRzBUNVNuVTdVdGlyOVp0TGRkR3ZCK01SUEFDOXZyYnNsejc4RnFlWmxhRGs5YVlPWG5iNGFhd0FFUno5SlNZZlVsZEpyMUZjZmtqcXBsTG4vekVBckRlNmh0Q0Zub2hmbDJMS2kiLCJtYWMiOiJlYzIwMjZlMzBkMGI3NzgwMGY3MmRjZTM1MDQ3ZjY5ZDk4ZjUyMDkzYzhmYTJiMTM0YTRjYjQ1ODEzOTBlMGM3In0%3D",
         "Host": "free.ai.cc",
         "Origin": "https://free.ai.cc",
         "Referer": "https://free.ai.cc/translate",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43",
-        "X-CSRF-TOKEN": "POMRcUVeOnOGzoczHYIa6fJpJS56y2QYEYgczhMc",
+        "X-CSRF-TOKEN": "oBbCeMQYxUEwmYCW5H956Pe18ofh6N26FdZ3UeMJ",
         "X-Requested-With": "XMLHttpRequest"
     }
+
     url = 'https://free.ai.cc/trans'
     data = {
         "text": f"{txt}",
         "tl": f"{language}",
-        "_token": "POMRcUVeOnOGzoczHYIa6fJpJS56y2QYEYgczhMc"
+        "_token": "oBbCeMQYxUEwmYCW5H956Pe18ofh6N26FdZ3UeMJ"
     }
     response = requests.post(url=url, headers=headers, data=data).json()
     status = response['status']
