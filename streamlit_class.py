@@ -1152,7 +1152,7 @@ class Tool_Web:
                 with st.chat_message("user"):
                     st.write(f"问题：{prompt}")
                 with st.spinner('正在编写答案'):
-                    info = get_ai(prompt)
+                    info = gemini_pro(prompt)
                 with st.chat_message("👋"):
                     st.write(f"{info}")
 
