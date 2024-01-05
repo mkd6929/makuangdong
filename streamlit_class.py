@@ -148,32 +148,33 @@ def get_poems(key):
         print(f'采集:{key}---失败--->失败原因:{e}')
 
 
-def get_ai(q):
-    """
-    调用https://free.ai.cc/talk的接口
-    :return:
-    """
+def gemini_pro(question):
     headers = {
-        "accept": "*/*",
-        "accept-encoding": "gzip, deflate, br",
-        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-        "content-length": "32",
-        "content-type": "application/json",
-        "cookie": "_ss_s_uid=d57d2591ea905acd3fe481036babe023; yonghu_token=75589ff7d7245bc9cdff7b74e24b0af3",
-        "origin": "https://ai.wlai.vip",
-        "referer": "https://ai.wlai.vip/aidraw/",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43"
+        "Content-Type": "application/json"
     }
-    url = 'https://ai.wlai.vip/web.php//chat/sendText'
-    data = {"group_id": 64078, "message": f'{q}'}
-    response = requests.post(url=url, headers=headers, data=json.dumps(data))
-    if response.text:
-        return response.text
-    else:
-        return '今日已达上限'
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+    params = {
+        "key": "AIzaSyBv0WgP7Ahn33pmrt_of52jK8eKDnDlaTQ"
+    }
+    data = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": f"{question}"
+                    }
+                ]
+            }
+        ]
+    }
+    data = json.dumps(data, separators=(',', ':'))
+    try:
+        response = requests.post(url, headers=headers, params=params, data=data)
+        info_json = response.json()
+        info = info_json["candidates"][0]["content"]["parts"][0]["text"]
+        return info
+    except Exception as e:
+        print(e)
 
 
 
