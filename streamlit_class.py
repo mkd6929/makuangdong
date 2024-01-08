@@ -46,7 +46,7 @@ def parse_goods_price(urls):
     headers = {
         "Authorization":  create_auth(),
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "Cookie": "60014_mmbuser=W1cNAAAFDjoAWQUCAFADVQJaW14CA1IFCgJVCVZaVQVXB1MJUwUBBw%3d%3d; _gid=GA1.2.1810844068.1703208861; ASP.NET_SessionId=p2hkrqgxdiaonxn1edsfcdh0; Hm_lvt_01a310dc95b71311522403c3237671ae=1702361308,1703208860,1703216505; Hm_lvt_85f48cee3e51cd48eaba80781b243db3=1702361303,1703208860,1703216505; acw_tc=784e2cb017032236709296209e7ac5821e0c12d981adad71268d3f5c26dc71; _gat_gtag_UA_145348783_1=1; Hm_lpvt_85f48cee3e51cd48eaba80781b243db3=1703223958; _ga=GA1.2.305938721.1702361277; _ga_1Y4573NPRY=GS1.1.1703223710.4.1.1703223968.0.0.0; Hm_lpvt_01a310dc95b71311522403c3237671ae=1703223968",        "Host": "tool.manmanbuy.com",
+        "Cookie": "60014_mmbuser=W1cNAAAFDjoAWQUCAFADVQJaW14CA1IFCgJVCVZaVQVXB1MJUwUBBw%3d%3d; acw_tc=784e2cb117046815892607432e226f6d85397e74d3c122d5ab15952ea0ba72; ASP.NET_SessionId=ktjgqaoxdtnf52bmtasxmcmu; Hm_lvt_01a310dc95b71311522403c3237671ae=1702361308,1703208860,1703216505,1704681590; Hm_lvt_85f48cee3e51cd48eaba80781b243db3=1703208860,1703216505,1703466285,1704681590; _gid=GA1.2.525619020.1704681592; _gat_gtag_UA_145348783_1=1; _ga=GA1.1.305938721.1702361277; Hm_lpvt_85f48cee3e51cd48eaba80781b243db3=1704681747; _ga_1Y4573NPRY=GS1.1.1704681591.9.1.1704681755.0.0.0; Hm_lpvt_01a310dc95b71311522403c3237671ae=1704681756",        "Host": "tool.manmanbuy.com",
         "Origin": "http://tool.manmanbuy.com",
         "Proxy-Connection": "keep-alive",
         "Referer": "http://tool.manmanbuy.com/HistoryLowest.aspx?url=https%3A%2F%2Fitem.jd.com%2F10080177096677.html",
@@ -408,6 +408,21 @@ def news_info(urls):
     article = Article(urls)
     article.download()
     article.parse()
+    if not article.text:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+        }
+        response = requests.get(url=urls, headers=headers)
+        response.encoding = 'utf-8'
+        html = etree.HTML(response.text)
+        title = html.xpath('//h1//text()')[0]
+        content = '\n'.join(html.xpath('//p//text()'))
+        if '�' in content:
+            response.encoding = 'gbk'
+            html = etree.HTML(response.text)
+            title = html.xpath('//h1//text()')[0]
+            content = '\n'.join(html.xpath('//p//text()'))
+        return title, content
     return article.title, article.text
 
 
@@ -1590,6 +1605,10 @@ class Tool_Web:
         侧边栏执行功能
         :return:
         """
+        with st.sidebar:
+            response = requests.get('http://116.62.53.121/images/1704683737308.png').content
+            st.image(response, caption='赞助作者')
+
         self.function_type = self.streamlit_selectbox()
         self.self_header()  # headers格式化
         self.self_format_json()  # json格式化
