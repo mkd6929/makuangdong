@@ -156,30 +156,33 @@ class gemini:
         :return:
         """
         if self.function_type == self.selectbox_options[1]:
-            st.title('图片识别问答')
-            with st.sidebar:
-                st.caption(":blue[介绍:]")
-                st.caption(":blue[本功能调用谷歌图片解析大模型]")
-                st.caption(":red[必须先上传图片]")
-                st.caption(":red[显示图片上传成功后才能开启问答功能！]")
-                image_file = st.file_uploader("上传图片", type=["jpg", "png", "jpeg"])
-                code = 0
-                if image_file:
-                    image_data = image_file.read()
-                    base64_string = base64.b64encode(image_data).decode("utf-8")
-                    image = Image.open(image_file)
-                    st.image(image, caption="上传的图片")
-                    st.success('图片上传成功')
-                    code = 1
-            if code:
-                prompt = st.chat_input("请输入问题:")
-                if prompt:
-                    with st.chat_message("user"):
-                        st.write(f"问题：{prompt}")
-                    with st.spinner('正在编写答案'):
-                        info = google_gemini_pro_vision(base64_string, prompt)
-                    with st.chat_message("👋"):
-                        st.write(f"{info}")
+            try:
+                st.title('图片识别问答')
+                with st.sidebar:
+                    st.caption(":blue[介绍:]")
+                    st.caption(":blue[本功能调用谷歌图片解析大模型]")
+                    st.caption(":red[必须先上传图片]")
+                    st.caption(":red[显示图片上传成功后才能开启问答功能！]")
+                    image_file = st.file_uploader("上传图片", type=["jpg", "png", "jpeg"])
+                    code = 0
+                    if image_file:
+                        image_data = image_file.read()
+                        base64_string = base64.b64encode(image_data).decode("utf-8")
+                        image = Image.open(image_file)
+                        st.image(image, caption="上传的图片")
+                        st.success('图片上传成功')
+                        code = 1
+                if code:
+                    prompt = st.chat_input("请输入问题:")
+                    if prompt:
+                        with st.chat_message("user"):
+                            st.write(f"问题：{prompt}")
+                        with st.spinner('正在编写答案'):
+                            info = google_gemini_pro_vision(base64_string, prompt)
+                        with st.chat_message("👋"):
+                            st.write(f"{info}")
+            except Exception as e:
+                st.error('回答失败请重试！')
 
 
     def streamlit_function(self):
