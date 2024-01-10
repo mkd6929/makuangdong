@@ -83,9 +83,8 @@ def gemini_pro(question):
         "Content-Type": "application/json"
     }
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
-    key_list = ['AIzaSyBv0WgP7Ahn33pmrt_of52jK8eKDnDlaTQ', 'AIzaSyCi2M1bvViS7Jpi7mhdB9Tc5-4IurrA-b0', 'AIzaSyCYwX9oNzx88dd5gyLaN9lXRC5ppKxNQ5M']
     params = {
-        "key": "AIzaSyBv0WgP7Ahn33pmrt_of52jK8eKDnDlaTQ"
+        "key": "AIzaSyCYwX9oNzx88dd5gyLaN9lXRC5ppKxNQ5M"
     }
     data = {
         "contents": [
