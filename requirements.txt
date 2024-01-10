@@ -4,3 +4,4 @@ lxml>=4.9.2,<5.0.0
 newspaper3k==0.2.8
 pdfplumber==0.10.2
 bs4==0.0.1
+Pillow==9.5.0	
