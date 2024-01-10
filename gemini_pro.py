@@ -160,8 +160,8 @@ class gemini:
             with st.sidebar:
                 st.caption(":blue[介绍:]")
                 st.caption(":blue[本功能调用谷歌图片解析大模型]")
-                st.caption(":blue[必须先上传图片]")
-                st.caption(":blue[显示图片上传成功后才能开启问答功能！]")
+                st.caption(":red[必须先上传图片]")
+                st.caption(":red[显示图片上传成功后才能开启问答功能！]")
                 image_file = st.file_uploader("上传图片", type=["jpg", "png", "jpeg"])
                 code = 0
                 if image_file:
