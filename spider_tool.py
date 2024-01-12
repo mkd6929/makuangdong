@@ -1,295 +1,268 @@
 import streamlit as st
-import json
-import urllib
-from urllib import parse
-from newspaper import Article
-import base64
-import pdfplumber
-import re
-import random
-import requests
 
 
-def json_convert_sql(info: dict) -> str:
-    text_list = ['CREATE TABLE table_name (', "`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',"]
-    for i in info.items():
-        info_key = i[0]
-        info_value = i[1]
-        if len(info_value) >= 100:
-            text = f"`{info_key}` text COMMENT '',"
-            text_list.append(text)
-        elif type(info_key) == int:
-            text = f"`{info_key}` int COMMENT '',"
-            text_list.append(text)
-        else:
-            text = f"`{info_key}` varchar(255) COMMENT '',"
-            text_list.append(text)
-    text_list.append("`create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',")
-    text_list.append("`updata_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',")
-    text_list.append('PRIMARY KEY (`id`)')
-    text_list.append(') ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;')
-    mysql_sql = '\n'.join(text_list)
-    return mysql_sql
+def introduce():
+    """
+    个人介绍
+    :return:
+    """
+    st.header('个人介绍')
+    st.divider()
+    st.write("姓名:马匡东")
+    st.write('年龄:23')
+    st.write('工作经验：3年')
+    # st.write('学校:西安航空职业技术学院')
+    # st.write('专业:计算机网络')
+    st.write('求职意向: Python开发工程师')
+    st.write('薪资要求:8k-15k')
+    st.write('联系方式:17829332636')
+    st.write('个人优势: 能做爬虫，能做后端，也可以编写exe程序，喜欢研究比较前端的技术')
+
+    st.header('技能')
+    st.divider()
+    texts = '''
+    1.精通python语法，精通使用python编写爬虫
+    2.熟悉消息队列、多线程、异步编写爬虫，以及多线程+异步并发爬虫
+    3.熟悉feapder爬虫框架，但个人不喜欢使用框架，框架局限性很大
+    4.精通playwright自动化测试框架，网页端测试或者自动化操控页面
+    5.熟练使用mysql数据库，熟悉sql语句增删改查、条件查询、批量入库语法的编写等
+    6.有丰富的对抗反爬经验(滑块验证、ip封禁、验证码等)
+    7.熟悉JavaScript语法、HTML以及CSS前端技术，熟悉JavaScript逆向技术(打断点，调试调用栈等)
+    8.精通编写Xpath、正则表达式等进行数据提取，精通正则表达式进行数据过滤
+    9.熟练使用Flask框架编写轻量级接口，熟悉Django框架开发
+    10.熟练Linux操作系统
+    11.具有良好的编码习惯和团队合作能力
+    '''
+    st.text(texts)
 
 
-def format_headers(text):
-    headers = text
-    split_headers = headers.split('\n')
-    new_headers_dict = {}
-    for header in split_headers:
-        info = header.split(':')
-        new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
-    return json.dumps(new_headers_dict)
+def job():
+    """
+    工作经历
+    :return:
+    """
+    st.header('工作经历')
+    st.divider()
+    st.write('大华建设项目管理有限公司河北分公司')
+    st.write('爬虫工程师')
+    st.write('2021.06-2022.01')
+    texts1 = '''
+    工作详情:
+    1. 公司为招标公司，需要获取海量的招标数据，主要获取招标平台上固定地区的
+    招标公告的信息
+    2. 工作内容为获取全国公共资源交易平台上的公开信息，获取主要的公司名称，
+    地址，联系方式
+    3. 将获取到的数据保存到数据库，因为获取的数据太多并且也有无用数据，所以
+    还得需要进行杂志过滤
+    4. 离职原因为公司只有我一个爬虫工程师，并且程序都已开发好，没上升空间以
+    及技术提升空间，月薪四千，工资不理想
+    '''
+    texts2 = '''
+    项目:
+    1.开发全国公共资源交易平台爬虫
+    2.裁判文书网爬虫
+    3.山东省公共资源交易平台爬虫
+    '''
+    st.text(texts1)
+    st.text(texts2)
+    st.divider()
+
+    st.write('河北银豆豆信息技术服务有限公司石家庄分公司')
+    st.write('python开发工程师')
+    st.write('2022.03-2022.09')
+    text1 = '''
+    工作内容:
+    1.接手上一任的项目（2个成型项目,以及一个平台）
+    2.开发爬虫,写接口
+    3.配置linux服务器，然后把项目放在服务器运行,运维程序
+    4.维护当前程序,每周更新所有客户站点的信息
+    '''
+    text2 = '''
+    项目:
+    1.开发1688采购网爬虫，涉及到的技术难点很多，如滑块，封ip等反爬技术，
+    以及使用js逆向进行加密参数的逆向破解
+    2.开发抖音采集评论程序，因为抖音爬取难度很大，所以我使用的是selenium
+    进行pc端的爬取，目前看没有问题，然后跟前端配合写接口
+    3.开发快手采集评论程序
+    '''
+    st.text(text1)
+    st.text(text2)
+
+    st.divider()
+    st.write('河北国瑞信息科技有限公司')
+    st.write('python开发工程师')
+    st.write('2023.02.15-至今')
+    text1 = '''
+        因公司主营业务为SEO优化，
+        所以项目都是根据SEO爬虫方面的需求进行的开发。
+        '''
+    text2 = '''
+        一、谷歌蜘蛛引流程序
+        项目介绍:实现代替人工获取谷歌api的服务账号生成的秘钥
+        1.先获取谷歌账号的有效cookie以及谷歌的账户验证id，此步骤为使用playwright进行自动化登录，然后进入页面监听接口获取到接口的头部信息后入库
+        2.进入谷歌申请提额页面进行谷歌账号项目自动化提额，本功能是破解谷歌的接口，进行协议化自动提交
+        3.等待前两项全部完毕后在谷歌console里进行项目创建->自动启用api->创建服务账号->以及下载秘钥
+        本步骤全部实现了协议化，之前seo优化师的找外包开发的程序每日仅能生成100左右的谷歌json秘钥，在我开发完毕协议化日生成效率至少是之前程序的50倍，
+        最后的难点是通过js逆向技术在下载秘钥的过程中破解base64的加密信息。
+        4.秘钥绑定域名，在数据库提取下载完毕的秘钥信息，然后提取出固定字段进行谷歌站长后台域名绑定，此步骤也实现的协议化
+        5.最后通过seo的工具进行绑定完毕的json推送实现蜘蛛引流。
+        本项目所有都是对接的数据库，数据表的设计也是我独立开发，只需要人工操作一小部分的步骤，其余功能都实现的自动化
+
+        二、项目AISPK的某些功能开发
+        1.亚马逊商品评论采集功能
+        2.沃尔玛商品评论采集功能
+        3.ins视频评论采集功能
+        4.tiktok视频评论采集功能(playwright技术实现)
+        5.实时谷歌新闻采集功能
+        6.有效邮箱验证功能
+        7.关键词谷歌排名功能
+        8.youtube视频评论采集功能
+        以上全部都是个人独立开发，使用Flask生成接口并部署至服务器
+
+        三、数据模型采集
+        1.根据关键词在谷歌以及必应上采集新闻信息，并且使用python的第三方库进行智能提取新闻文章且入库
+        2.采集谷歌以及必应的关键词摘要和标题
+        3.采集雅虎的摘要以及标题
+        4.采集duckduckgo的摘要以及标题
+        5.采集谷歌以及必应的关键词的相关词数据
+        以上采集全部都是协议化，且添加多线程以及异步策略，关键词数量在50万以上，采集数据量在一个亿左右
+
+        四、采集站点产品信息模板开发
+        为适配公司的建站业务，需要在客户指定网站上采集产品的详细信息等，方便前端人员调用，
+        为了提高不同站点的采集效率，所以开发了这套针对客户站点的爬虫采集模板
+        整体流程为：进入站点主页->进入产品页->获取产品分类链接->解析产品分类链接获取产品列表页链接->解析产品列表页链接获取产品详情页链接->解析产品详情页获取最终数据
+        模板功能介绍
+        1.所有功能只需要填写首页链接，图片保存路径，数据表名称，要解析信息的xpath语法以及翻页参数信息即可
+        2.模板可以自动补全获取到的链接一系列的问题，如缺少http或https，缺少域名等问题
+        3.模板自带单独的日志输出
+        4.检测产品标题是否合格，是否重复等功能
+        5.自带建表功能，根据不同需求自动创建数据表，拼接的批量入库sql，增快入库效率
+        6.可以自动下载图片，并且图片名称为图片整体链接进行md5后保存，自动检测图片后缀，最后通过md5为名称进行保存，防止出现重叠图片
+        7.产品详情会采集整个详情的html源码，在采集产品的详细信息时会过滤a标签等信息，并且会把详情里的图片替换成本地采集的图片
+        8.支持单独测试函数，针对某个产品也可以进行单独测试
+        本模板经过测试可适用于绝大部分没有反爬的站点
+        '''
+    st.text(text1)
+    st.text(text2)
 
 
-def st_format_headers(keyword):
-    with st.sidebar:
-        try:
-            header_info = format_headers(text=keyword)
-            return header_info
-        except Exception as e:
-            st.text(f'headers格式化失败：{e}')
+def index():
+    """
+    主页显示
+    :return:
+    """
+    introduce()
+    job()
 
 
-def st_sql(sql_name):
-    with st.sidebar:
-        try:
-            return json_convert_sql(json.loads(sql_name))
-        except Exception as e:
-            st.text(f'{e}')
+class gemini:
+
+    def __init__(self):
+        self.function_type = None  # 功能类别
+        self.selectbox_options = (
+            "个人介绍",
+            "项目经历",
+        )
 
 
-def st_url(urls):
-    with st.sidebar:
-        split_url = urls.split('?')
-    try:
-        url_domain = split_url[0]
-        st.text(f'url = "{url_domain}"')
-        url_param_list = split_url[1].split('&')
-        st.text('param = {')
-        for url_param in url_param_list:
-            url_param_spilt = url_param.split('=')
-            st.text(f'''"{url_param_spilt[0]}": "{urllib.parse.unquote(url_param_spilt[1].encode('utf-8'))}",''')
-        st.text('}')
-    except:
-        st.text('param = {}')
-
-def down_img_content(urls):
-    num = 0
-    while num < 5:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-        }
-        try:
-            response = requests.get(urls, headers=headers).content
-            return response
-        except Exception as e:
-            num += 1
-            print(e)
+    def streamlit_selectbox(self):
+        """
+        侧边栏初始化
+        :return:
+        """
+        tool_selectbox = st.sidebar.selectbox(
+            label="功能",
+            options=self.selectbox_options
+        )
+        return tool_selectbox
 
 
-def get_img_url_list():
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-    }
-    url = f'https://pic.netbian.top/shoujibizhi/index_{random.randint(2, 286)}.html'
-    response = requests.get(url, headers=headers)
-    href_list = ['https:' + imgs1 for imgs1 in re.findall('data-original="(.*?)"', response.text)]
-    return href_list
+    def job_exp(self):
+        """
+        项目经历
+        :return:
+        """
+        st.header('项目经历')
+        st.divider()
+        st.write('某卖书网站的数据采集模块')
+        texts1 = '''
+        项目详情：
+            1，因为这个网站是一个卖书的平台，所以需要获取一些书
+            2，对方想提出的是爬取京东以及当当网的书籍进行价格对比
+            3，按照对方的思路，分别开发了京东爬虫以及当当爬虫
+            4，分别配置了ip代理，使用flask框架把程序打包成接口的形式
+            5，部署到linux服务器，跟对方前端配合进行接口的对接工作
+            '''
+        st.text(texts1)
+        st.divider()
+
+        st.write('某提词器的无水印解析')
+        texts1 = '''
+            项目详情：
+                1，分别对抖音，快手，小红书，b站，西瓜视频进行无水印视频的抓取
+                2，把抓取到的信息存放在mysql数据库，视频则上传至阿里云oss
+                3，写接口，配合前端
+                4，部署到linux服务器
+                5，运维一个月
+                '''
+        st.text(texts1)
+        st.divider()
+
+        st.write('网站复制')
+        texts1 = '''
+            项目详情：
+                1，要获取整个网站的信息，以及源码
+                2，要保证抓到并下载到本地的网页跟网页上看到的是一样的
+                3，保存结果就是在本地
+                4，项目算是开发完成，有一个mhtml以及html的问题没有解决，具体时间太久细
+                节记不太清了
+                5，技术方式都是使用的selenium进行的抓取，把所有网址下载的链接保存进
+                redis，然后从redis提取，生成队列，利用selenium的截图功能进行截图，保存
+                在本地，然后再在本地进行页面的替换，保证本地下载的网站也可以进行链接跳转
+                    '''
+        st.text(texts1)
+        st.divider()
+
+        st.write('AI问答')
+        texts1 = '''
+            项目详情：
+                1，对接谷歌双子座文本大模型
+                2，通过利用python第三方库streamlit进行编写前端
+                3，封装好AI功能
+                4，部署至服务器
+                5，现链接为https://mkdaipro.streamlit.app/，依旧可以使用
+                    '''
+        st.text(texts1)
+        st.divider()
+
+        st.write('京东抢购程序')
+        texts1 = '''
+            项目详情：
+                整体项目流程:一键领取优惠券->清空购物车->修改默认地址->商品添加入购物车->进入订单页->提交订单
+                1.全部采用京东pc端接口,破解京东关键的eid和pf参数
+                2.使用playwright技术进行自动化登录，参考多方资料进行js逆向破解滑块验证获取登录后的有效cookie
+                3.编写定时模块，时间在微秒级，且增加配置文件，可以一键修改定时时间，添加商品id，是否使用ip，用户账号密码等信息
+                4.支持多线程多用户多商品,支持无货监控等功能
+                5.调用接口实现账号一键领取多个优惠券
+                6.对接京粉api等一系列操作，整体抢购时间小于一秒钟
+                本程序全部都是个人独立开发
+                        '''
+        st.text(texts1)
+        st.divider()
 
 
-def news_info(urls):
-    article = Article(urls)
-    article.download()
-    article.parse()
-    st.title(article.title)
-    st.write(article.text)
-
-
-def get_video_id(kid):
-    headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-        }
-    url = f'https://www.youtube.com/embed/{kid}'
-    num = 0
-    while True:
-        if num == 5:
-            return None
-        try:
-            response = requests.get(url=url, headers=headers)
-            ids = re.findall('"INNERTUBE_API_KEY":"(.*?)"', response.text)[0]
-            return ids
-        except Exception as e:
-            print(f'video_id:{e}')
-            num += 1
-
-def get_info(kid, vid):
-    headers = {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
-    }
-    url = "https://www.youtube.com/youtubei/v1/player"
-    params = {
-        "key": f"{vid}",
-        "prettyPrint": "false"
-    }
-    data = {
-      "context": {
-        "client": {
-          "hl": "zh-CN",
-          "gl": "SG",
-          "remoteHost": "192.53.117.115",
-          "deviceMake": "",
-          "deviceModel": "",
-          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36,gzip(gfe)",
-          "clientName": "WEB_EMBEDDED_PLAYER",
-          "clientVersion": "1.20230829.01.00",
-          "osName": "Windows",
-          "osVersion": "10.0",
-          "platform": "DESKTOP",
-          "clientFormFactor": "UNKNOWN_FORM_FACTOR",
-          "timeZone": "Asia/Shanghai",
-          "browserName": "Chrome",
-          "browserVersion": "116.0.0.0",
-          "userInterfaceTheme": "USER_INTERFACE_THEME_LIGHT",
-          "connectionType": "CONN_CELLULAR_3G",
-          "playerType": "UNIPLAYER",
-        },
-      },
-      "videoId": f"{kid}",
-    }
-    video_list = []
-    codes = 0
-    while True:
-        if codes == 5:
-            return None
-        try:
-            response = requests.post(url=url, headers=headers, params=params, data=json.dumps(data))
-            info_json = response.json()['streamingData']['formats']
-            for info in info_json:
-                info_dict = {
-                    "视频链接": info['url'],
-                    "视频画质": info['qualityLabel'],
-                    "视频帧率": info['fps'],
-                }
-                video_list.append(info_dict)
-            return video_list
-        except Exception as e:
-            codes += 1
-            print(f'获取视频失败：{e}')
+    def streamlit_function(self):
+        """
+        侧边栏执行功能
+        :return:
+        """
+        self.function_type = self.streamlit_selectbox()
+        if self.function_type == '个人介绍':
+            index()
+        if self.function_type == '项目经历':
+            self.job_exp()
 
 
 if __name__ == '__main__':
-    img_list = []
-    imgs = ''
-
-
-    with st.sidebar:
-        st.title('爬虫工具站')
-    add_selectbox = st.sidebar.selectbox(
-        "功能列表",
-        ("Headers格式化", "Json格式转数据表", "Url参数提取", "新闻采集", "PDF转Word", "图片采集", "Youtube视频采集")
-    )
-    if add_selectbox == 'Headers格式化':
-        with st.sidebar:
-            add_radio = st.text_area(label='请输入需要格式化的header:')
-            button_code = st.button(':blue[格式化]')
-        if button_code:
-            if add_radio:
-                st.json(st_format_headers(add_radio))
-            else:
-                st.json({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})
-    if add_selectbox == 'Json格式转数据表':
-        with st.sidebar:
-            add_radio = st.text_area(label='请输入需要转换的json:')
-            button_code = st.button(':blue[转换数据表]')
-        if button_code:
-            if add_radio:
-                st.code(st_sql(add_radio), language='sql')
-            else:
-                st.code('''CREATE TABLE table_name (
-           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
-           `User-Agent` text COMMENT '',
-           `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-           `updata_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-           PRIMARY KEY (`id`)
-           ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;''')
-    if add_selectbox == 'Url参数提取':
-        with st.sidebar:
-            add_radio = st.text_input(label='请输入需要转换的链接：')
-            button_code = st.button(':blue[提取]')
-        if button_code:
-            if add_radio:
-                st_url(add_radio)
-            else:
-                st.text('''url = ""\nparams = {}''')
-    if add_selectbox == '新闻采集':
-        with st.sidebar:
-            add_radio = st.text_area(label='请输入需要采集的链接:')
-            button_code = st.button(':blue[采集]')
-        if button_code:
-            if add_radio:
-                news_info(add_radio)
-            else:
-                st.text('''抓取失败''')
-    if add_selectbox == 'PDF转Word':
-        col1, col2 = st.columns([3, 1])
-        with st.sidebar:
-            file = st.file_uploader("请上传文件", type="pdf")
-        if file:
-            with col2:
-                base64_pdf = base64.b64encode(file.read()).decode('utf-8')
-                pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="550" height="1000" type="application/pdf">'
-                st.markdown(pdf_display, unsafe_allow_html=True)
-        if file:
-            with st.sidebar:
-                st.write('文件上传完毕')
-                button_code = st.button(':blue[转换]')
-            with col1:
-                if button_code:
-                    name = file.name.split('.')[0]
-                    pdf = pdfplumber.open(file)
-                    page = len(pdf.pages)
-                    texts = ""
-                    for i in range(0, page):
-                        page = pdf.pages[i]
-                        text = page.extract_text()
-                        texts += text
-                    st.header('转换结果:')
-                    st.text(texts)
-                    with st.sidebar:
-                        down_name = name + '.docx'
-                        st.download_button('保存为Word', texts, file_name=f'{down_name}')
-    if add_selectbox == '图片采集':
-        with st.sidebar:
-            if st.button('获取随机图片'):
-                img_list = get_img_url_list()
-                imgs = random.choice(img_list)
-        if imgs:
-            st.image(f'{imgs}', caption='Sunrise by the mountains')
-            img_info = down_img_content(imgs)
-            btn = st.download_button(
-                label="下载图片",
-                data=img_info,
-                file_name=f"flower.jpg",
-                mime="image/jpg"
-            )
-        else:
-            st.image(f'https://huamaobizhi.com/appApi/wallpaper/getImages_1_0/?pid=31161&resolution=1000w680h', caption='默认图片')
-    if add_selectbox == 'Youtube视频采集':
-        with st.sidebar:
-            add_radio = st.text_area(label='请输入需要采集的链接:')
-            button_code = st.button(':blue[采集]')
-        if button_code:
-            kids = re.findall('v=(.*)', add_radio)[0]
-            vids = get_video_id(kids)
-            if vids:
-                video_url_list = get_info(kids, vids)
-                if video_url_list:
-                    for video in video_url_list:
-                        st.header(f"画质:{video['视频画质']} 帧率:{video['视频帧率']}")
-                        st.video(video['视频链接'])
-                        st.write('右击视频保存')
-                else:
-                    st.write('视频采集失败')
-            else:
-                st.write('视频采集失败')
+    gemini = gemini()
+    gemini.streamlit_function()
