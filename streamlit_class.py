@@ -1607,8 +1607,8 @@ class Tool_Web:
         """
         with st.sidebar:
             st.title('dong工具站')
-            response = requests.get('http://116.62.53.121/images/1704683737308.png').content
-            st.image(response, caption='赞助作者')
+            # response = requests.get('http://116.62.53.121/images/1704683737308.png').content
+            # st.image(response, caption='赞助作者')
 
         self.function_type = self.streamlit_selectbox()
         self.self_header()  # headers格式化
