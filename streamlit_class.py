@@ -597,19 +597,32 @@ def format_headers(headers: str) -> json:
     :param headers:复制的header文本
     :return: 格式化完毕后的json文本
     """
-    try:
-        split_headers = headers.split('\n')
-        new_headers_dict = {}
-        for header in split_headers:
+    split_headers = headers.split('\n')
+    new_headers_dict = {}
+    for header in split_headers:
+        if ':' not in header:
+            # '''针对有换行的headers进行操作'''
+            split_headers = headers.split('\n')
+            head_list = []
+            info_list = []
+            code = 0
+            for header in split_headers:
+                code += 1
+                if ':' in header and code % 2 == 1:
+                    head_list.append(header)
+                else:
+                    info_list.append(header)
+            info_zip = zip(head_list, info_list)
+            new_headers_dict = {}
+            for info in info_zip:
+                new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '')})
+        else:
             info = header.split(':')
             if len(info) >= 3:
                 new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip() + ':' + info[2]})
             else:
                 new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
-        return json.dumps(new_headers_dict)
-    except Exception as e:
-        print(e)
-        return None
+    return json.dumps(new_headers_dict)
 
 
 def get_article(keyword):
