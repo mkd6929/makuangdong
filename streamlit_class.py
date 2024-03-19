@@ -599,10 +599,8 @@ def format_headers(headers: str) -> json:
     """
     split_headers = headers.split('\n')
     new_headers_dict = {}
-    for header in split_headers:
-        if ':' not in header:
-            # '''针对有换行的headers进行操作'''
-            split_headers = headers.split('\n')
+    for header1 in split_headers:
+        if ':' not in header1:
             head_list = []
             info_list = []
             code = 0
@@ -611,17 +609,21 @@ def format_headers(headers: str) -> json:
                 if ':' in header and code % 2 == 1:
                     head_list.append(header)
                 else:
+                    if ':' in header:
+                        if 'Chromium' in header:
+                            info_list.append(header)
+                            continue
+                        if 'http' in header:
+                            info_list.append(header)
+                            continue
+                        info_list.append('')
+                        code += 1
+                        head_list.append(header)
+                        continue
                     info_list.append(header)
             info_zip = zip(head_list, info_list)
-            new_headers_dict = {}
             for info in info_zip:
                 new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '')})
-        else:
-            info = header.split(':')
-            if len(info) >= 3:
-                new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip() + ':' + info[2]})
-            else:
-                new_headers_dict.update({info[0].replace(':', ''): info[1].replace('"', '').strip()})
     return json.dumps(new_headers_dict)
 
 
