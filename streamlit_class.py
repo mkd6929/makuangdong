@@ -616,6 +616,9 @@ def format_headers(headers: str) -> json:
                         if 'http' in header:
                             info_list.append(header)
                             continue
+                        if len(header) > 50:
+                            info_list.append(header)
+                            continue
                         info_list.append('')
                         code += 1
                         head_list.append(header)
